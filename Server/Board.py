@@ -20,10 +20,10 @@ class Board(object):
 		return True
 
 	def verticalChecking(x, y):
-		if x-4 < 0:	# upper boundary
+		if x - 4 < 0:	# upper boundary
 			iteration = x + 1	# get iteration based on left value on boundary
 			
-		elif x+4 > 20:	# lower boundary
+		elif x + 4 > 20:	# lower boundary
 			iteration = 20 - x
 			
 		else:	# don't have boundary
@@ -45,10 +45,10 @@ class Board(object):
 		return False
 
 	def horizontalChecking(x, y):
-		if y-4 < 0:	# upper boundary
-			iteration = x + 1	# get iteration based on left value on boundary
+		if y - 4 < 0:	# upper boundary
+			iteration = y + 1	# get iteration based on left value on boundary
 			
-		elif y+4 > 20:	# lower boundary
+		elif y + 4 > 20:	# lower boundary
 			iteration = 20 - y
 			
 		else:	# don't have boundary
