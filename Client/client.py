@@ -15,9 +15,75 @@ class Client(object):
 		param[standard.PARAM_USERNAME] = username
 
 		data = {}
-		data[standard.MESSAGE] = MESSAGE_AUTH
+		data[standard.MESSAGE] = standard.MESSAGE_AUTH
 		data[standard.MESSAGE_PARAM] = param
-		self.conn.send(data)
+		self.send(data)
+
+	def createRoom(self, roomName):
+		param = {}
+		param[standard.PARAM_ROOM_NAME] = roomName
+
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_CREATE_ROOM
+		data[standard.MESSAGE_PARAM] = param
+		self.send(data)
+
+	def refresh(self):
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_REFRESH
+		self.send(data)
+
+	def joinRoom(self, roomID, playerID):
+		param = {}
+		param[standard.PARAM_ROOM_ID] = roomID
+		param[standard.PARAM_PLAYER_ID] = playerID
+
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
+		data[standard.MESSAGE_PARAM] = param
+		self.send(data)
+
+	def joinGame(self, playerID, roomID):
+		param = {}
+		param[standard.PARAM_PLAYER_ID] = playerID
+		param[standard.PARAM_ROOM_ID] = roomID
+
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
+		data[standard.MESSAGE_PARAM] = param
+		self.send(data)
+
+	def setPawn(self, row, col, playerID):
+		param = {}
+		param[standard.PARAM_ROW] = row
+		param[standard.PARAM_COL] = col
+		param[standard.PARAM_PLAYER_ID] = playerID
+
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_SET_PAWN
+		data[standard.MESSAGE_PARAM] = param
+		self.send(data)
+
+	def spectate(self, roomID):
+		param = {}
+		param[standard.PARAM_ROOM_ID] = roomID
+
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
+		data[standard.MESSAGE_PARAM] = param
+		self.send(data)
+
+	def leave(self):
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_LEAVE
+		self.send(data)
+
+	def exit(self):
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_EXIT
+		self.send(data)
+		self.conn.close()
+
 
 """
 def initPrompt() :
