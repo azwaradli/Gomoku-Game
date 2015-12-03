@@ -7,7 +7,7 @@ class GameController(object):
 	CURRENT_ROOMID = 1
 	CURRENT_ONLINE_PLAYERS_ID = 1
 	
-	def __init__(self, arg):
+	def __init__(self):
 		super(GameController, self).__init__()
 		self.online_players = []
 		self.room_list = []
