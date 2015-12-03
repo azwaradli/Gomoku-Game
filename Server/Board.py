@@ -30,13 +30,12 @@ class Board(object):
 	def verticalChecking(self, x, y, pawn):
 		count = 0
 		temp = x - 1
-		print "vert"
-		while temp > 0 and self.arrayBoard[temp][y] != pawn and count < 5: # checking upper side
+		while temp >= 0 and self.arrayBoard[temp][y] == pawn and count < 5: # checking upper side
 			temp -= 1
 			count += 1
 
 		temp = x + 1
-		while temp < 20 and self.arrayBoard[temp][y] != pawn and count < 5: # checking lower side
+		while temp < 20 and self.arrayBoard[temp][y] == pawn and count < 5: # checking lower side
 			temp += 1
 			count += 1
 
@@ -48,13 +47,12 @@ class Board(object):
 	def horizontalChecking(self, x, y, pawn):
 		count = 0
 		temp = y - 1
-		print "hor"
-		while temp > 0 and self.arrayBoard[x][temp] != pawn and count < 5: # checking left side
+		while temp > 0 and self.arrayBoard[x][temp] == pawn and count < 5: # checking left side
 			temp -= 1
 			count += 1
 
 		temp = y + 1
-		while temp < 20 and self.arrayBoard[x][temp] != pawn and count < 5: # checking right side
+		while temp < 20 and self.arrayBoard[x][temp] == pawn and count < 5: # checking right side
 			temp += 1
 			count += 1
 
@@ -68,7 +66,7 @@ class Board(object):
 		tempX = x + 1
 		tempY = y - 1
 		print "dig"
-		while (tempX < 20 and tempY >= 0) and self.arrayBoard[tempX][tempY] != pawn and count < 5:
+		while (tempX < 20 and tempY >= 0) and self.arrayBoard[tempX][tempY] == pawn and count < 5:
 			# checking quadran 1
 			tempX -= 1
 			tempY -= 1
@@ -76,7 +74,7 @@ class Board(object):
 
 		tempX = x - 1
 		tempY = y - 1
-		while (tempX >= 0 and tempY >= 0) and self.arrayBoard[tempX][tempY] != pawn and count < 5:
+		while (tempX >= 0 and tempY >= 0) and self.arrayBoard[tempX][tempY] == pawn and count < 5:
 			# checking quadran 2
 			tempX -= 1
 			tempY -= 1
@@ -84,7 +82,7 @@ class Board(object):
 
 		tempX = x - 1
 		tempY = y + 1
-		while (tempX >= 0 and tempY < 20) and self.arrayBoard[tempX][tempY] != pawn and count < 5:
+		while (tempX >= 0 and tempY < 20) and self.arrayBoard[tempX][tempY] == pawn and count < 5:
 			# checking quadran 3
 			tempX -= 1
 			tempY += 1
@@ -92,7 +90,7 @@ class Board(object):
 
 		tempX = x + 1
 		tempY = y + 1
-		while (tempX < 20 and tempY < 20) and self.arrayBoard[tempX][tempY] != pawn and count < 5:
+		while (tempX < 20 and tempY < 20) and self.arrayBoard[tempX][tempY] == pawn and count < 5:
 			# checking quadran 4
 			tempX += 1
 			tempY += 1
