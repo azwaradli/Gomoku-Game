@@ -1,7 +1,7 @@
-import GameController
-import MessageController
+from GameController import *
+from MessageController import *
 
-import socket, select
+import socket, select, json
 
 def broadcast_data(sock, message):
 	for socket in CONNECTION_LIST:
@@ -38,21 +38,23 @@ if __name__ == "__main__":
 			if sock == servsock:
 				sockfd, addr = servsock.accept()		# accept the connection
 				CONNECTION_LIST.append(sockfd)			# add the client socket to keep track of connected client
+				print "Client connected"
 
 			else:
 				try:
 					msg = msServer.receiveMessage(sock)	# receive the message sent from sock
 					msgType = msg["message"]			# get the message
 					
-					if msgType == "auth":
+					if msgType == "auth":					# user first-time log into the server
 						playerName = msg["params"]["name"]
 						player = gameServer.newPlayer(playername, sock)
 						gameServer.addPlayerOnline(player)
 
-						obj = dict([("message", msgType), ("success", 1)])
+						obj = dict([("message", msgType), ("success", 1), ("player_id", player.getPlayerId())])
+						print obj
 						msServer.sendMessage(sock, obj)
 
-					elif msgType == "refresh":
+					elif msgType == "refresh":				# get the list of the room in the server
 						roomList = []
 						for room in gameServer.getRoomList():
 							roomTuple = [("id", room.getRoomId()), ("name", room.getRoomName())]
@@ -61,7 +63,7 @@ if __name__ == "__main__":
 						obj = dict([("message", msgType), ("success", 1), ("room_list", roomList)])
 						msServer.sendMessage(sock, obj)
 
-					elif msgType == "create_room":
+					elif msgType == "create_room":			# player want to create a new room with the name
 						roomName = msg["params"]["name"]
 						room = gameServer.newRoom(roomName)
 						gameServer.addRoom(room)
@@ -69,10 +71,12 @@ if __name__ == "__main__":
 						obj = dict([("message", msgType), ("success", 1)])
 						msServer.sendMessage(sock, obj)
 
-					elif msgType == "join_room":
+					elif msgType == "join_room":			# player want to join the defined room
 						roomId = msg["params"]["room_id"]
 						roomTarget = gameServer.getRoomList()[roomId]
 
+						# check if the room is full
+						# if not full, add the player to the room
 						if len(roomTarget.getPlayersInRoom()) < 5:
 							roomTarget.addPlayerToRoom(msg["params"]["player_id"])
 							obj = dict([("message", msgType), ("success", 1)])
@@ -80,6 +84,21 @@ if __name__ == "__main__":
 							obj = dict([("message", msgType), ("success", 0)])
 							
 						msServer.sendMessage(sock, obj)
+
+					elif msgType == "left_room":			# case if the player lefts the current room he was in
+						roomId = msg["params"]["room_id"]
+						roomTarget = gameServer.getRoomList()[roomId]
+
+						roomTarget.deletePlayerFromRoom(msg["params"]["player_id"])
+						if len(roomTarget.getPlayersInRoom()) == 0:
+							# function to delete the room
+							gameServer.deleteRoom(roomTarget)
+							print "Room %d deleted! Room is empty" % (roomId)
+
+						obj = dict([("message", msgType), ("success", 1)])
+						msServer.sendMessage(sock, obj)
+
+					
 
 				except:
 					if sock in CONNECTION_LIST:
