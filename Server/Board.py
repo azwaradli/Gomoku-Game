@@ -101,11 +101,9 @@ class Board(object):
 	def fiveRows(self, x, y, pawn):
 		# is this placement form a 5 or more pawn in a line?
 		
-		if verticalChecking(self, x, y, pawn) == True:
-			return True
-		elif horizontalChecking(self, x, y, pawn) == True:
-			return True
-		elif diagonalChecking(self, x, y, pawn):
+		if verticalChecking(self, x, y, pawn) or
+			horizontalChecking(self, x, y, pawn) or 
+			diagonalChecking(self, x, y, pawn):
 			return True
 		else
 			return False
