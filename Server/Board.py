@@ -1,20 +1,21 @@
 class Board(object):
+
+	LEGAL = 0
+
 	def __init__(self):
 		# create 20x20 board
 		super(Board, self).__init__()
-		self.array_board = [[0] * 20 for i in range(20)]
+		self.arrayBoard = [[LEGAL] * 20 for i in range(20)]
 
 	def getBoard(self):
 		return self.array_board
 
 	def placeBoard(self, x, y, pawn):
-		self.array_board[x][y] = pawn
+		if isLegal(self, x, y):
+			self.arrayBoard[x][y] = pawn
 
-	def isCellEmpty(self, x, y):
-		return self.array_board[x][y] == 0
-
-	def isCellPlayer(self, x, y, pawn):
-		return self.array_board[x][y] == pawn
+	def isLegal(self, x, y):
+		return self.arrayBoard[x][y] == LEGAL
 
 	def checkBoard(self, player):
 		# check if a player is winning
@@ -22,66 +23,89 @@ class Board(object):
 		# STUB: still waiting for Game Logics
 		return True
 
-	def verticalChecking(x, y):
-		if x - 4 < 0:	# upper boundary
-			iteration = x + 1	# get iteration based on left value on boundary
-			
-		elif x + 4 > 20:	# lower boundary
-			iteration = 20 - x
-			
-		else:	# don't have boundary
-			iteration = 4
-
-		while iteration > 0 and result == False:
-			temp = x 	# moving x variable
-			count = 0				
-			for i in range (4, 1): # check if x+4 to x contains pawn
-				if self_board[temp+i][y] != pawn:
-					break
-				else:
-					count++
-			if count == 5:
-				return True
+	def verticalChecking(self, x, y, pawn):
+		count = 0
+		temp = x - 1
+		while temp > 0 and selfBoard[temp][y] != pawn and count < 5: # checking upper side
 			temp--
-			iteration--
+			count++
 
-		return False
+		temp = x + 1
+		while temp < 20 and selfBoard[temp][y] != pawn and count < 5: # checking lower side
+			temp++
+			count++
 
-	def horizontalChecking(x, y):
-		if y - 4 < 0:	# upper boundary
-			iteration = y + 1	# get iteration based on left value on boundary
-			
-		elif y + 4 > 20:	# lower boundary
-			iteration = 20 - y
-			
-		else:	# don't have boundary
-			iteration = 4
+		if count >= 5
+			return True
+		else
+			return False
 
-		while iteration > 0 and result == False:
-			temp = y 	# moving x variable
-			count = 0				
-			for i in range (4, 1): # check if x+4 to x contains pawn
-				if self_board[x][temp+i] != pawn:
-					break
-				else:
-					count++
-			if count == 5:
-				return True
+	def horizontalChecking(self, x, y, pawn):
+		count = 0
+		temp = y - 1
+
+		while temp > 0 and selfBoard[x][temp] != pawn and count < 5: # checking left side
 			temp--
-			iteration--
+			count++
 
-		return False
+		temp = y + 1
+		while temp < 20 and selfBoard[x][temp] != pawn and count < 5: # checking right side
+			temp++
+			count++
 
-	def diagonalChecking(x, y):
+		if count >= 5
+			return True
+		else
+			return False
 
-	def fiveRows(self, x, y):
+	def diagonalChecking(self, x, y, pawn):
+		count = 0
+		tempX = x + 1
+		tempY = y - 1
+		while (tempX < 20 and tempY >= 0) and selfBoard[tempX][tempY] != pawn and count < 5:
+			# checking quadran 1
+			tempX--
+			tempY--
+			count++
+
+		tempX = x - 1
+		tempY = y - 1
+		while (tempX >= 0 and tempY >= 0) and selfBoard[tempX][tempY] != pawn and count < 5:
+			# checking quadran 2
+			tempX--
+			tempY--
+			count++
+
+		tempX = x - 1
+		tempY = y + 1
+		while (tempX >= 0 and tempY < 20) and selfBoard[tempX][tempY] != pawn and count < 5:
+			# checking quadran 3
+			tempX--
+			tempY++
+			count++
+
+		tempX = x + 1
+		tempY = y + 1
+		while (tempX < 20 and tempY < 20) and selfBoard[tempX][tempY] != pawn and count < 5:
+			# checking quadran 4
+			tempX++
+			tempY++
+			count++
+
+		if count >= 5:
+			return True
+		else:
+			return False
+
+
+	def fiveRows(self, x, y, pawn):
 		# is this placement form a 5 or more pawn in a line?
 		
-		if verticalChecking(x, y) == True:
+		if verticalChecking(self, x, y, pawn) == True:
 			return True
-		elif horizontalChecking(x, y) == True:
+		elif horizontalChecking(self, x, y, pawn) == True:
 			return True
-		# elif diagonalChecking(x, y):
-		# 	return True
+		elif diagonalChecking(self, x, y, pawn):
+			return True
 		else
 			return False
