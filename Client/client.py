@@ -33,40 +33,40 @@ class Client(object):
 		data[standard.MESSAGE] = standard.MESSAGE_REFRESH
 		self.send(data)
 
-	def joinRoom(self, roomID, playerID):
+	def joinRoom(self, roomId, playerId):
 		param = {}
-		param[standard.PARAM_ROOM_ID] = roomID
-		param[standard.PARAM_PLAYER_ID] = playerID
+		param[standard.PARAM_ROOM_Id] = roomId
+		param[standard.PARAM_PLAYER_Id] = playerId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
 		data[standard.MESSAGE_PARAM] = param
 		self.send(data)
 
-	def joinGame(self, playerID, roomID):
+	def joinGame(self, playerId, roomId):
 		param = {}
-		param[standard.PARAM_PLAYER_ID] = playerID
-		param[standard.PARAM_ROOM_ID] = roomID
+		param[standard.PARAM_PLAYER_Id] = playerId
+		param[standard.PARAM_ROOM_Id] = roomId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
 		data[standard.MESSAGE_PARAM] = param
 		self.send(data)
 
-	def setPawn(self, row, col, playerID):
+	def setPawn(self, row, col, playerId):
 		param = {}
 		param[standard.PARAM_ROW] = row
 		param[standard.PARAM_COL] = col
-		param[standard.PARAM_PLAYER_ID] = playerID
+		param[standard.PARAM_PLAYER_Id] = playerId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_SET_PAWN
 		data[standard.MESSAGE_PARAM] = param
 		self.send(data)
 
-	def spectate(self, roomID):
+	def spectate(self, roomId):
 		param = {}
-		param[standard.PARAM_ROOM_ID] = roomID
+		param[standard.PARAM_ROOM_Id] = roomId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM

@@ -2,11 +2,11 @@ import socket, select
 
 class Connection(object):
 
-	def __init__(self, host, port, buf_size = 4096):
+	def __init__(self, host, port, bufSize = 4096):
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.host = host
 		self.port = port
-		self.buf_size = buf_size
+		self.bufSize = bufSize
 		self.socket.connect((self.socket, self.port))
 		self.socket.blocking(0)
 		self.CONNECT = True
@@ -22,7 +22,7 @@ class Connection(object):
 			raise Exception("You have to connect first before receiving data")
 		return _recv(self.socket)
 
-	def recv_and_close(self):
+	def recvAndClose(self):
 		data = self.recv()
 		self.close()
 		return data
@@ -53,10 +53,10 @@ def _recv(socket):
 	total = int(length_str)
 	# use a memoryview to receive the data chunk by chunk efficiently
 	view = memoryview(bytearray(total))
-	next_offset = 0
-	while total - next_offset > 0:
-		recv_size = socket.recv_into(view[next_offset:], total - next_offset)
-		next_offset += recv_size
+	nextOffset = 0
+	while total - nextOffset > 0:
+		recv_size = socket.recv_into(view[nextOffset:], total - nextOffset)
+		nextOffset += recv_size
 	try:
 		deserialized = json.loads(view.tobytes())
 	except (TypeError, ValueError), e:

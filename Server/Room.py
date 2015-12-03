@@ -1,28 +1,28 @@
 class Room(object):
 
-	def __init__(self, r_id, r_name):
+	def __init__(self, roomId, roomName):
 		super(Room, self).__init__()
-		self.room_id = r_id
-		self.room_name = r_name
-		self.player_list = []
+		self.roomId = roomId
+		self.roomName = roomName
+		self.playerList = []
 
 	def getRoomId(self):
-		return self.room_id
+		return self.roomId
 
 	def getRoomName(self):
-		return self.room_name
+		return self.roomName
 
 	def getPlayersInRoom(self):
-		return self.player_list
+		return self.playerList
 
 	def setRoomName(self, _name):
-		self.room_name = _name
+		self.roomName = _name
 
 	def addPlayerToRoom(self, _player):
-		self.player_list.append(_player)
+		self.playerList.append(_player)
 
 	def deletePlayerFromRoom(self, _player):
-		self.player_list.remove(_player)
+		self.playerList.remove(_player)
 
 
 

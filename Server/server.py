@@ -3,7 +3,7 @@ from MessageController import *
 
 import socket, select, json
 
-def broadcast_data(sock, message):
+def broadcastData(sock, message):
 	for socket in CONNECTION_LIST:
 		if socket != servsock:
 			try:
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 					
 					if msgType == "auth":					# user first-time log into the server
 						playerName = msg["params"]["name"]
-						player = gameServer.newPlayer(playername, sock)
+						player = gameServer.newPlayer(playerName, sock)
 						gameServer.addPlayerOnline(player)
 
 						obj = dict([("message", msgType), ("success", 1), ("player_id", player.getPlayerId())])
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 				except:
 					if sock in CONNECTION_LIST:
 						CONNECTION_LIST.remove(sock)
-					broadcast_data(sock, "Client (%s, %s) is offline!" % addr)
+					broadcastData(sock, "Client (%s, %s) is offline!" % addr)
 					
 					sock.close()
 					

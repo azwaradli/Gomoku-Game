@@ -9,32 +9,32 @@ class GameController(object):
 	
 	def __init__(self):
 		super(GameController, self).__init__()
-		self.online_players = []
-		self.room_list = []
+		self.onlinePlayers = []
+		self.roomList = []
 
 	def getRoomList(self):
 		# get available room list
-		return self.room_list
+		return self.roomList
 
 	def getOnlinePlayers(self):
 		# get players online
-		return self.online_players
+		return self.onlinePlayers
 
 	def addPlayerOnline(self, newplayer):
 		# precondition = player is less than 5
-		self.online_players.append(newplayer)
+		self.onlinePlayers.append(newplayer)
 
 	def deletePlayerOnline(self, player):
 		# precondition = players online not zero and _player exists
-		self.online_players.remove(player)
+		self.onlinePlayers.remove(player)
 
 	def addRoom(self, room):
 		# precondition = total rooms are less than 3
-		self.room_list.append(room)
+		self.roomList.append(room)
 
 	def deleteRoom(self, room):
 		# precondition = total rooms not zero and room exists
-		self.room_list.remove(room)
+		self.roomList.remove(room)
 
 	def newPlayer(self, name, sockfd):
 		# creating a new player
