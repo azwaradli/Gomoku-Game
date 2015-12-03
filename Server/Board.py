@@ -4,6 +4,9 @@ class Board(object):
 		super(Board, self).__init__()
 		self.array_board = [[0] * 20 for i in range(20)]
 
+	def getBoard(self):
+		return self.array_board
+
 	def placeBoard(self, x, y, pawn):
 		self.array_board[x][y] = pawn
 

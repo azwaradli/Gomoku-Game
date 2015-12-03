@@ -1,0 +1,96 @@
+Skenario:
+Server start up, waiting for connection
+Setiap connection masuk ke array CONNECTION_LIST
+
+Client masuk:
+1. User masukin nickname, terus masukin IP dan port Server.
+2. Server harus nyala dulu sebelumnya, dengan port tertentu
+3. Kalo client masuk connect, tambahin socket si client ke CONNECTION_LIST
+	- Buat player dengan nickname yg diinput & id yg ditentukan, seketika setelah connect ke server
+		* Setelah buat koneksi dengan SOCKET, kirim credentials berupa json yg berlaku berupa Client Nickname ke Server
+		* Buat objek Player dengan param Nickname, current id, dan socket file descriptornya
+		* Simpan player ke Player_list yg online
+		* Return response dari server (success/not)
+	- Kalo sukses, tampilin halaman baru
+	- Kalo gagal, tampilin pesan error, prompt username baru lagi
+4. Client masuk ke server, tampilin list room yg bisa di join
+	- Setiap ada user yang masuk ke server, kasih tau di prompt box
+	- Setiap ada yang disconnect, kasih tau juga
+5. Client bisa refresh list room, buat ngambil list room terbaru dari server
+	- Buat pesan json buat refresh list room, return list server baru
+	- Tiap room di list dikasih jumlah pemain yg ada di room itu
+	- Kalo sukses, harusnya kasih list baru
+	- Kalo gagal, tampilin pesan error...
+6. Client bisa create new room, dengan parameter nama room
+	- Client isi form buat room baru dgn nama room tertentu
+	- Request room baru di kirim ke Server
+	- Request diproses
+		* buat object room baru dengan parameter roomname, current room_id
+		* tambahin di room_list di game
+	- Kalo sukses, list di refresh buat ngambil current room_list
+	- Kalo gagal, tampilin pesan error...
+7. Client bisa join
+	- Client select room yg kosong, baru klik join
+		* client otomatis send request join_room dgn parameter playerid, dan roomid/roomname
+		* sebelumnya bakal ada validasi terlebih dahulu (BELUM!)
+		* server nambahin playerid tersebut ke room yg dimaksud
+		* dia return response
+	- Kalo berhasil, sign in ke room tersebut
+	- Kalo gagal, tampilin pesan error...
+8. Empty room? Automatically deleted!
+9. Setelah client join room, bakal masuk ke menu room
+	- Tampilin list player yang ada di room tersebut
+	- Kalo ada client masuk room tsb, bakal ada notifikasi di chatbox (pake broadcast)
+	- sebelumnya, Player bisa milih jadi join game atau jadi spe'tator aja
+		- Kalo player mau pilih join game
+			* client request json dengan nama join_game dengan parameter playerid, roomid/roomname
+			* server nerima request
+			* server nambahin playerid tersebut ke player_game_list
+			* server assign pawn ke player buat di board itu
+			* server return response berupa sukses/tidak
+			* kalo sukses, return 1, dan tampilan berubah
+			* kalo error, tampilin pesan error...
+		- Kalo player mau jadi spectator aja bisa
+			* client request json dengan nama join_game dengan parameter playerid, roomid/roomname
+			* server nerima request
+			* server nambahin playerid tersebut ke player_spectator_list
+			* server return response berupa sukses/tidak
+			* kalo sukses, return 1, dan tampilan berubah, dia jadi spectator aja
+			* kalo error, tampilin pesan error...
+	- Di dalem room tersedia chatbox buat orang2 yg ada di sana
+		* kalo user ngirim chat, maka client request chat ke server
+		* Request isinya roomid, userid (atau data player tsb)
+		* server bakal nerusin pesan broadcast ke room yg dimaksud dan client id pun bakal di pass juga
+		* kalo yg nulis spectator, ada tandanya spectator gitu
+10. Game menu
+	- Game akan nunggu sampai minimal 3 player masuk di sana
+	- Kalo udah 3 player, maka tombol start bisa diklik
+	- Bisa nunggu sampai maksimal 5 player bisa main (tanpa spectator)
+	- Bisa keluar dari game menu
+		* client klik disconnect, baru client kirim request 
+11. Spectator menu
+	- 
+
+
+
+
+
+
+JSON Message Type From Client
+auth 		= buat masuk ke dalam server (param: nickname)
+create_room = buat room baru di server tersebut (param: room_name)
+refresh		= return new list of rooms
+join_room	= join sebuah room baru (param: roomid/roomname, playerid)
+join_game	= join game baru di room tersebut (param: playerid, roomid/roomname)
+set_pawn	= perintah buat set pawn di board tertentu (param: x, y, playerid)
+spectator	= join spectator yg ngawasin game
+chat		= chat message
+
+
+JSON RESPONSE RULES:
+Setiap pesan yang dikirim harus dibales dgn type yg sama dan return valuenya, misal:
+{
+	"message" : "auth"
+	"success" : 1
+}
+Nandain kalo authentication sukses

@@ -1,5 +1,5 @@
 class Player(object):
-	def __init__(self, p_id, sock_fd):
+	def __init__(self, p_id, p_name, sock_fd):
 		super(Player, self).__init__()
 		self.id = p_id
 		self.sockfd = sock_fd		# socket descriptor of the player client
