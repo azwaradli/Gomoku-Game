@@ -83,14 +83,17 @@ class Server(object):
 							# if not full, add the player to the room
 							if len(roomTarget.getPlayersInRoom()) < 5:
 								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
+								
+								if len(roomTarget.getPlayersInRoom()) >= 3:
+									print "PLAY THE GAME MOTHERFUCNER"
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_ID, roomId)])
 							else:
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
 								
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "left_room":			# case if the player lefts the current room he was in
-							roomId = msg["params"]["room_id"]
+						elif msgType == standard.MESSAGE_JOIN_ROOM:			# case if the player lefts the current room he was in
+							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
 							roomTarget.deletePlayerFromRoom(msg["params"]["player_id"])
