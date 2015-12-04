@@ -1,16 +1,21 @@
 import json
+import standard
 
 class Handler(object):
-
+	listRooms = ["" for j in range(5)]
 	def __init__(self, conn):
 		self.conn = conn
 		self.running = True
 		self.msgRecv = ""
 		self.playerId = -1
 		self.roomId = -1
+		self.message = ""
 
-	def handle():
-		while self.running:
+	def getRooms(self):
+		return self.listRooms
+
+	def handle(self):
+		while True:
 			try:
 				self.msgRecv = self.conn.recv() # return in JSON format
 				if not self.msgRecv:
@@ -35,7 +40,10 @@ class Handler(object):
 					print "login unsuccessful..."
 
 			elif message[standard.MESSAGE] == standard.MESSAGE_REFRESH:
+				i = 0
 				for room in message["room_list"]:
+					self.listRooms[i] = room
+					i += 1
 					print room
 
 			elif message[standard.MESSAGE] == standard.MESSAGE_CREATE_ROOM:
@@ -55,5 +63,5 @@ class Handler(object):
 				else:
 					print "login unsuccessful..."
 
-			elif message[standard.MESSAGE] == standard.MESSAGE_
+			self.message = message
 

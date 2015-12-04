@@ -53,6 +53,7 @@ def _recv(socket):
 		char = socket.recv(1)
 	total = int(lengthStr)
 	# use a memoryview to receive the data chunk by chunk efficiently
+
 	view = memoryview(bytearray(total))
 	nextOffset = 0
 	while total - nextOffset > 0:

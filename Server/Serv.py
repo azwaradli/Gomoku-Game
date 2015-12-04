@@ -44,8 +44,10 @@ class Server(object):
 							player = self.gameServer.newPlayer(playerName, sock)
 							self.gameServer.addPlayerOnline(player)
 
+							
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_PLAYER_ID, player.getPlayerId())])
 							self.msServer.sendMessage(sock, obj)
+							print "sending ", obj
 
 						elif msgType == standard.MESSAGE_REFRESH:				# get the list of the room in the server
 							roomList = []
@@ -61,6 +63,7 @@ class Server(object):
 								roomList.append(roomTuple)
 
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("room_list", roomList)])
+							print obj
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_CREATE_ROOM:			# player want to create a new room with the name

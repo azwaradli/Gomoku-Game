@@ -44,7 +44,7 @@ ScreenManager:
 			background_color: [2.8,2.8,2.8,1]
 			text: '[color=F41D4E]Make Room[/color]'
 			markup: True
-			on_press: app.root.current = "room"
+			on_press: app.root.current = "room"; root.manager.get_screen('make_room').newRoom(root.ids.room_name.text)
 
 <GomokuGame>:
 	name: "game"

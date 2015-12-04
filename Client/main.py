@@ -12,13 +12,14 @@ from kivy.graphics import *
 from client import Client
 from Connection import Connection
 from Handler import Handler
-import thread
+import threading
 
 #Global Variable
 connected = False
 try:
-	client =  Client(Connection("127.0.0.1", 5000))
-	handler = Handler(Connection("127.0.0.1", 5000))
+	conn = Connection("127.0.0.1", 5000)
+	client =  Client(conn)
+	handler = Handler(conn)
 	connected = True
 except:
 	connected = False
@@ -28,10 +29,21 @@ def game_screen(*args):
 	App.get_running_app().root.get_screen('game').init()
 	App.get_running_app().root.current = 'game'
 
+class myThread (threading.Thread):
+    def __init__(self, threadID, name):
+        super(myThread,self).__init__()
+        self.threadID = threadID
+        self.name = name
+    def run(self):
+        print "Starting " + self.name
+        handler.handle()
+        print "Exiting " + self.name
+
 class GomokuLogin(Screen):
 	def login(self, user):
 		if user:
 			App.get_running_app().root.get_screen('room').setUsername(user)
+			App.get_running_app().root.get_screen('room').init()
 			client.login(user)
 			App.get_running_app().root.current = 'room'
 		else:
@@ -39,6 +51,11 @@ class GomokuLogin(Screen):
 
 class GomokuRooms(Screen):
 	username = Property('')
+
+	def init(self):
+		client.refresh()
+		Rooms = handler.getRooms()
+		print Rooms
 
 	def setUsername(self, user):
 		self.username = user
@@ -99,7 +116,9 @@ class GomokuRooms(Screen):
 			self.ids.rooms.add_widget(Label(text="No rooms available"))
 
 class GomokuMakeRoom(Screen):
-	pass
+	def newRoom(self, name):
+		client.createRoom(name)
+		App.get_running_app().root.get_screen('room').init()
 
 class GomokuGame(Screen):
 	gameboard = [[Button() for j in range(20)] for i in range(20)]
@@ -143,10 +162,9 @@ failed = Builder.load_file("failed.kv")
 class GomokuApp(App):
 
 	def build(self):
-		try:
-			thread.start_new_thread(handler.handle, ("Thread-1", 2, ))
-		except:
-			return failed
+		handleThread = myThread(1, "Handler Thread")
+		handleThread.daemon = True
+		handleThread.start()
 		if not connected:
 			return failed
 		return presentation
