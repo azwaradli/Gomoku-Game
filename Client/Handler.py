@@ -6,6 +6,8 @@ class Handler(object):
 		self.conn = conn
 		self.running = True
 		self.msgRecv = ""
+		self.playerId = -1
+		self.roomId = -1
 
 	def handle():
 		while self.running:
