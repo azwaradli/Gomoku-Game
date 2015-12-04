@@ -1,0 +1,200 @@
+#:kivy 1.0
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManager:
+	transition: FadeTransition()
+	GomokuLogin:
+	GomokuRooms:
+	GomokuMakeRoom:
+	GomokuGame:
+
+<GomokuMakeRoom>:
+	name: "make_room"
+	canvas:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            source: 'background.jpg'
+            size: self.size
+            pos: self.pos
+	GridLayout:
+		Label:
+			center_x: root.center_x
+	        top: root.center_y + 100
+			padding: [5,5]
+			text: '[color=F41D4E]Make your own room[/color]'
+			markup: True
+		TextInput:
+			id: room_name
+			size: 500,50
+			center_x: root.center_x
+	        top: root.center_y
+			padding: [5,5]
+			line_height: 20
+			foreground_color: (0.2,0.2,0.2,1)
+			hint_text: 'Room name'
+			hint_text_color: (0.6,0.5,0.5,0.9)
+			cursor_color: (0,0,0,1)
+			multiline: False
+		Button:
+			size: 250,50
+			center_x: root.center_x
+	        top: root.center_y - 100
+			padding: [5,5]
+			background_color: [2.8,2.8,2.8,1]
+			text: '[color=F41D4E]Make Room[/color]'
+			markup: True
+			on_press: app.root.current = "room"
+
+<GomokuGame>:
+	name: "game"
+	canvas:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            source: 'background.jpg'
+            size: self.size
+            pos: self.pos
+	GridLayout:
+		cols:2
+		GridLayout:
+			canvas:
+				Color:
+					rgba: 1,1,1,1
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			rows: 1
+			GridLayout:
+				id: game_board
+				rows: 20
+				cols: 20
+				# Render game board from GomokuGame class
+
+		GridLayout:	
+			cols: 1
+			width: 300
+			size_hint_x: None
+			GridLayout:
+			GridLayout:
+				cols: 1
+				Label:
+					text: '[color=F41D4E]Player[/color]'
+					markup: True
+				Button:
+					text: '[color=ffffff]fauzan[/color]'
+					markup: True
+					background_color: [0.188,1.612,2.941,1]
+				Button:
+					text: '[color=ffffff]ahmad[/color]'
+					markup: True
+					background_color: [2.953,1.67,0.471,1]
+				Button:
+					text: '[color=ffffff]azwar[/color]'
+					markup: True
+					background_color: [0.294,1.753,0.07,1]
+			GridLayout:
+				cols: 1
+				GridLayout:
+				GridLayout:
+				Button:
+					text: 'Quit Game'
+					on_press: app.root.current = "room"
+
+
+<GomokuRooms>:
+
+	name: "room"
+	canvas:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            source: 'background.jpg'
+            size: self.size
+            pos: self.pos
+	GridLayout:
+		id: main_canvas
+		rows: 1
+		GridLayout:
+			cols: 1
+			GridLayout:
+				id: navbar
+				cols: 2
+				padding: [5,5]
+				height: 75
+				size_hint_y: None
+				GridLayout:
+					cols: 3
+					Label:
+						text: 'GO[color=F41D4E]ON[/color]'
+						markup: True
+						font_size: '20sp'
+					Label:
+						id: helloUser
+						text: 'Hi, [color=F41D4E]'+ root.username +'[/color]'
+						markup: True
+					Label:
+				GridLayout:
+					cols:2
+					Button:
+						text: '[color=F41D4E]New Room[/color]'
+						on_press: app.root.current = "make_room"
+						background_color: [2.8,2.8,2.8,1]
+						markup: True
+					Button:
+						text: '[color=F41D4E]Logout[/color]'
+						on_press: app.root.current = "login"
+						background_color: [2.8,2.8,2.8,1]
+						markup: True
+			GridLayout:
+				id: rooms
+				cols: 1
+				row_force_default: True
+				row_default_height: 220
+				# GridLayout Rooms from GomokuRooms.printRooms()
+
+
+<GomokuLogin>:
+	name: "login"
+	canvas:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            source: 'background.jpg'
+            size: self.size
+            pos: self.pos
+    GridLayout:
+    	Label:
+			center_x: root.center_x
+	        top: root.center_y + 300
+			padding: [5,5]
+			text: '[color=FFFFFF]GOMOKU[/color] [color=F41D4E]ONLINE[/color]'
+			markup: True
+			font_size: '50sp'
+		Label:
+			center_x: root.center_x
+	        top: root.center_y + 100
+			padding: [5,5]
+			text: '[color=F41D4E]Nickname[/color]'
+			markup: True
+		TextInput:
+			id: nickname
+			size: 500,50
+			center_x: root.center_x
+	        top: root.center_y
+			padding: [5,5]
+			line_height: 20
+			foreground_color: (0.2,0.2,0.2,1)
+			hint_text: 'nickname'
+			hint_text_color: (0.6,0.5,0.5,0.9)
+			cursor_color: (0,0,0,1)
+			multiline: False
+		Button:
+			size: 250,50
+			center_x: root.center_x
+	        top: root.center_y - 100
+			padding: [5,5]
+			background_color: [2.8,2.8,2.8,1]
+			text: '[color=F41D4E]Enter[/color]'
+			markup: True
+			on_press: root.manager.get_screen('login').login(root.ids.nickname.text); root.manager.get_screen('room').printRoom()
