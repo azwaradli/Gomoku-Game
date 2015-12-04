@@ -1,6 +1,6 @@
 import socket, select, string, sys
 
-from etc import standard
+import standard
 
 class Client(object):
 
@@ -17,6 +17,7 @@ class Client(object):
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_AUTH
 		data[standard.MESSAGE_PARAM] = param
+		print data
 		self.send(data)
 
 	def createRoom(self, roomName):
@@ -31,6 +32,11 @@ class Client(object):
 	def refresh(self):
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_REFRESH
+		self.send(data)
+
+	def onlinePlayers(self):
+		data = {}
+		data[standard.MESSAGE] = "list_user"
 		self.send(data)
 
 	def joinRoom(self, roomId, playerId):
@@ -84,6 +90,52 @@ class Client(object):
 		self.send(data)
 		self.conn.close()
 
+	def handler(self):
+		while 1:
+			try:
+				socket_list = [sys.stdin, self.conn.socket]
+				readsock, writesock, errsock = select.select(socket_list, [], [])
+
+				for sock in readsock:
+					#incoming messages
+					if (sock == self.conn.getSocket()):
+						data = self.conn.recv()
+						if standard.MESSAGE in data:
+							if data[standard.MESSAGE] == standard.MESSAGE_AUTH:
+								if data[standard.MESSAGE_SUCCESS] == 1:
+									print "login successful. your login key =", data["player_id"]
+								else:
+									print "login unsuccessful..."
+							elif data[standard.MESSAGE] == standard.MESSAGE_REFRESH:
+								for room in data["room_list"]:
+									print room
+							elif data[standard.MESSAGE] == standard.MESSAGE_CREATE_ROOM:
+								if data[standard.MESSAGE_SUCCESS] == 1:
+									print "create room successful."
+								else:
+									print "create room unsuccessful..."
+							elif data[standard.MESSAGE] == "list_user":
+								for player in data["player_list"]:
+									print player
+						else :
+							print "\nDisconnected from server!"
+							sys.exit()
+
+					else:
+						# client send message
+						msg = sys.stdin.readline()
+						command = msg.split()
+
+						if (command[0] == standard.MESSAGE_AUTH):
+							self.login(command[1])
+						elif (command[0] == standard.MESSAGE_REFRESH):
+							self.refresh()
+						elif (command[0] == standard.MESSAGE_CREATE_ROOM):
+							self.createRoom(command[1])
+						elif (command[0] == "online"):
+							self.onlinePlayers()
+			except Exception, e:
+				print e
 
 """
 def initPrompt() :

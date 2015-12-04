@@ -1,4 +1,4 @@
-import socket, select
+import socket, select, json
 
 class Connection(object):
 
@@ -7,9 +7,11 @@ class Connection(object):
 		self.host = host
 		self.port = port
 		self.bufSize = bufSize
-		self.socket.connect((self.socket, self.port))
-		self.socket.blocking(0)
+		self.socket.connect((self.host, self.port))
 		self.CONNECT = True
+
+	def getSocket(self):
+		return self.socket
 
 	def send(self, data):
 		if not self.socket:
@@ -44,13 +46,12 @@ def _send(socket, data):
 	socket.sendall(serialized)
 
 def _recv(socket):
-	#read the length of the data, letter by letter untuk we reach EOL
 	lengthStr = ''
 	char = socket.recv(1)
 	while char != '\n':
 		lengthStr += char
 		char = socket.recv(1)
-	total = int(length_str)
+	total = int(lengthStr)
 	# use a memoryview to receive the data chunk by chunk efficiently
 	view = memoryview(bytearray(total))
 	nextOffset = 0
@@ -61,4 +62,5 @@ def _recv(socket):
 		deserialized = json.loads(view.tobytes())
 	except (TypeError, ValueError), e:
 		raise Exception('Data received was not in JSON format')
+
 	return deserialized

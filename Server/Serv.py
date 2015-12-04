@@ -37,34 +37,40 @@ class Server(object):
 				else:
 					try:
 						msg = self.msServer.receiveMessage(sock)	# receive the message sent from sock
-						print msg
 						msgType = msg[standard.MESSAGE]
 
-						if msgType == "auth":						# user first-time log into the server
+						if msgType == standard.MESSAGE_AUTH:						# user first-time log into the server
 							playerName = msg[standard.MESSAGE_PARAM][standard.PARAM_USERNAME]
 							player = self.gameServer.newPlayer(playerName, sock)
 							self.gameServer.addPlayerOnline(player)
-							print "auth"
 
-							obj = dict([("message", msgType), ("success", 1), ("player_id", player.getPlayerId())])
-							print obj
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("player_id", player.getPlayerId())])
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "refresh":				# get the list of the room in the server
+						elif msgType == standard.MESSAGE_REFRESH:				# get the list of the room in the server
 							roomList = []
 							for room in self.gameServer.getRoomList():
-								roomTuple = [("id", room.getRoomId()), ("name", room.getRoomName())]
+								roomTuple = [(standard.PARAM_ROOM_ID, room.getRoomId()), (standard.PARAM_ROOM_NAME, room.getRoomName())]
 								roomList.append(roomTuple)
 
-							obj = dict([("message", msgType), ("success", 1), ("room_list", roomList)])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("room_list", roomList)])
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "create_room":			# player want to create a new room with the name
-							roomName = msg["params"]["name"]
+						elif msgType == standard.MESSAGE_CREATE_ROOM:			# player want to create a new room with the name
+							roomName = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_NAME]
 							room = self.gameServer.newRoom(roomName)
 							self.gameServer.addRoom(room)
 
-							obj = dict([("message", msgType), ("success", 1)])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
+							self.msServer.sendMessage(sock, obj)
+
+						elif msgType == "list_user":
+							playerList = []
+							for player in self.gameServer.getOnlinePlayers():
+								playerTuple = [("user_id", player.getPlayerId()), ("name", player.getPlayerNickname())]
+								playerList.append(playerTuple)
+
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("player_list", playerList)])
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == "join_room":			# player want to join the defined room
@@ -100,11 +106,11 @@ class Server(object):
 
 					except Exception, e:
 						print e
-						if sock in self.CONNECTION_LIST:
-							self.CONNECTION_LIST.remove(sock)
-						print "Client (%s, %s) is offline!" % addr
+						# if sock in self.CONNECTION_LIST:
+						# 	self.CONNECTION_LIST.remove(sock)
+						# print "Client (%s, %s) is offline!" % addr
 						
-						sock.close()
+						# sock.close()
 						
 						continue
 

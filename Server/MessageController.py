@@ -35,7 +35,6 @@ class MessageController(object):
 		except (TypeError, ValueError), e:
 			raise Exception('Data received was not in JSON format')
 
-		print deserialized
 		return deserialized
 
 	BUF_MAX = 4096
