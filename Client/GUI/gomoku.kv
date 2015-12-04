@@ -1,0 +1,149 @@
+#:kivy 1.0
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManager:
+	transition: FadeTransition()
+	GomokuLogin:
+	GomokuRooms:
+	GomokuMakeRoom:
+	GomokuGame:
+
+<GomokuMakeRoom>:
+	name: "make_room"
+	GridLayout:
+		Label:
+			center_x: root.center_x
+	        top: root.center_y + 100
+			padding: [5,5]
+			text: '[color=F41D4E]Make your own room[/color]'
+			markup: True
+		TextInput:
+			id: room_name
+			size: 500,50
+			center_x: root.center_x
+	        top: root.center_y
+			padding: [5,5]
+			line_height: 20
+			foreground_color: (0.2,0.2,0.2,1)
+			hint_text: 'Room name'
+			hint_text_color: (0.6,0.5,0.5,0.9)
+			cursor_color: (0,0,0,1)
+			multiline: False
+		Button:
+			size: 250,50
+			center_x: root.center_x
+	        top: root.center_y - 100
+			padding: [5,5]
+			background_color: [2.8,2.8,2.8,1]
+			text: '[color=F41D4E]Make Room[/color]'
+			markup: True
+			on_press: app.root.current = "room"
+
+<GomokuGame>:
+	name: "game"
+	GridLayout:
+		cols:2
+		GridLayout:
+			canvas:
+				Color:
+					rgba: 1,1,1,1
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			rows: 1
+			Label:
+				text:'[color=F41D4E]Game in here[/color]'
+				markup: True
+		GridLayout:	
+			cols: 1
+			width: 300
+			size_hint_x: None
+			GridLayout:
+			GridLayout:
+				cols: 1
+				Label:
+					text: 'Player :'
+					markup: True
+				Label:
+					text: '[color=1089FA]fauzan[/color]'
+					markup: True
+				Label:
+					text: '[color=199506]ahmad[/color]'
+					markup: True
+				Label:
+					text: '[color=FB8E28]azwar[/color]'
+					markup: True
+			GridLayout:
+				cols: 1
+				GridLayout:
+				GridLayout:
+				Button:
+					text: 'Quit Game'
+
+
+<GomokuRooms>:
+
+	name: "room"
+	GridLayout:
+		id: main_canvas
+		rows: 1
+		GridLayout:
+			cols: 1
+			GridLayout:
+				id: navbar
+				cols: 2
+				padding: [5,5]
+				height: 50
+				size_hint_y: None
+				Label:
+					id: helloUser
+					text: 'Hi, [color=F41D4E]'+ root.username +'[/color]'
+					markup: True
+				GridLayout:
+					cols:2
+					Button:
+						text: 'New Room'
+						on_press: app.root.current = "make_room"
+					Button:
+						text: 'Logout'
+						on_press: app.root.current = "login"
+			GridLayout:
+				id: rooms
+				cols: 1
+				# GridLayout Rooms from GomokuRooms.printRooms()
+
+
+<GomokuLogin>:
+	name: "login"
+	canvas:
+        Rectangle:
+            pos: 0, 0
+            size: self.parent.width , self.parent.height
+    GridLayout:
+		Label:
+			center_x: root.center_x
+	        top: root.center_y + 100
+			padding: [5,5]
+			text: '[color=F41D4E]Nickname[/color]'
+			markup: True
+		TextInput:
+			id: nickname
+			size: 500,50
+			center_x: root.center_x
+	        top: root.center_y
+			padding: [5,5]
+			line_height: 20
+			foreground_color: (0.2,0.2,0.2,1)
+			hint_text: 'nickname'
+			hint_text_color: (0.6,0.5,0.5,0.9)
+			cursor_color: (0,0,0,1)
+			multiline: False
+		Button:
+			size: 250,50
+			center_x: root.center_x
+	        top: root.center_y - 100
+			padding: [5,5]
+			background_color: [2.8,2.8,2.8,1]
+			text: '[color=F41D4E]Enter[/color]'
+			markup: True
+			on_press: root.manager.get_screen('room').setUsername(root.ids.nickname.text); app.root.current = "room"; root.manager.get_screen('room').printRoom()
