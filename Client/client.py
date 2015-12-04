@@ -6,8 +6,6 @@ class Client(object):
 
 	def __init__(self, conn):
 		self.conn = conn
-		self.player_id = -1
-		self.room_id = -1
 
 	def send(self, data):
 		self.conn.send(data)
