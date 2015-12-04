@@ -1,16 +1,14 @@
-import MessageController
+from Player import *
+from Room import *
 
 class GameController(object):
-
-	MAX_PLAYERS_PER_ROOM = 5
-	MAX_ROOM_ALLOWED = 3
-	CURRENT_ROOMID = 1
-	CURRENT_ONLINE_PLAYERS_ID = 1
 	
 	def __init__(self):
 		super(GameController, self).__init__()
 		self.onlinePlayers = []
 		self.roomList = []
+		self.CURRENT_ONLINE_PLAYERS_ID = 1
+		self.CURRENT_ROOMID = 1
 
 	def getRoomList(self):
 		# get available room list
@@ -38,13 +36,13 @@ class GameController(object):
 
 	def newPlayer(self, name, sockfd):
 		# creating a new player
-		player = Player(CURRENT_ONLINE_PLAYERS_ID, sockfd, name)
-		CURRENT_ONLINE_PLAYERS_ID += 1
+		player = Player(self.CURRENT_ONLINE_PLAYERS_ID, sockfd, name)
+		self.CURRENT_ONLINE_PLAYERS_ID += 1
 		return player
 
 	def newRoom(self, name):
 		# create a new room
-		room = Room(CURRENT_ROOMID, name)
-		CURRENT_ROOMID += 1
+		room = Room(self.CURRENT_ROOMID, name)
+		self.CURRENT_ROOMID += 1
 		return room
 		

@@ -1,6 +1,7 @@
 from GameController import *
 from MessageController import *
 
+import standard
 import socket, select, json
 
 class Server(object):
@@ -17,7 +18,7 @@ class Server(object):
 		self.sockfd.bind((self.ipaddr, self.port))
 		self.sockfd.listen(5)
 
-		self.CONNECTION_LIST.append(servsock)
+		self.CONNECTION_LIST.append(self.sockfd)
 
 		self.gameServer = GameController()
 		self.msServer = MessageController()
@@ -25,7 +26,7 @@ class Server(object):
 
 	def serverListen(self):
 		while 1:
-			readsock, writesock, errsock = select.select(CONNECTION_LIST, [], [])
+			readsock, writesock, errsock = select.select(self.CONNECTION_LIST, [], [])
 
 			for sock in readsock:
 				if sock == self.sockfd:
@@ -36,12 +37,14 @@ class Server(object):
 				else:
 					try:
 						msg = self.msServer.receiveMessage(sock)	# receive the message sent from sock
-						msgType = msg["message"]
+						print msg
+						msgType = msg[standard.MESSAGE]
 
 						if msgType == "auth":						# user first-time log into the server
-							playerName = msg["params"]["name"]
-							player = self.gameServer.newPlayer(playername, sock)
+							playerName = msg[standard.MESSAGE_PARAM][standard.PARAM_USERNAME]
+							player = self.gameServer.newPlayer(playerName, sock)
 							self.gameServer.addPlayerOnline(player)
+							print "auth"
 
 							obj = dict([("message", msgType), ("success", 1), ("player_id", player.getPlayerId())])
 							print obj
@@ -96,6 +99,7 @@ class Server(object):
 
 
 					except Exception, e:
+						print e
 						if sock in self.CONNECTION_LIST:
 							self.CONNECTION_LIST.remove(sock)
 						print "Client (%s, %s) is offline!" % addr
@@ -103,6 +107,9 @@ class Server(object):
 						sock.close()
 						
 						continue
+
+					except KeyboardInterrupt:
+						exit()
 
 	def close(self):
 		self.sockfd.close()

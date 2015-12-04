@@ -6,15 +6,37 @@ class MessageController(object):
 		super(MessageController, self).__init__()
 
 	def sendMessage(self, sockfd, data):
-		msg = json.dumps(data)
-		sockfd.sendall(msg + "\n")
+		try:
+			serialized = json.dumps(data)
+		except (TypeError, ValueError), e:
+			raise Exception("You can only send JSON-serializable data")
+		# send the length of the serialized data first
+		sockfd.send('%d\n' % len(serialized))
+		# send the serialized data
+		sockfd.sendall(serialized)
 
 	def receiveMessage(self, sockfd):
-		data = sockfd.recv(BUF_MAX)
-		msg = data.split("\n")
+		lengthStr = ''
+		char = sockfd.recv(1)
+		while char != '\n':
+			lengthStr += char
+			char = sockfd.recv(1)
+		total = int(lengthStr)
 
-		message = json.loads(msg[0])
-		return message
+		# use a memoryview to receive the data chunk by chunk efficiently
+		view = memoryview(bytearray(total))
+		nextOffset = 0
+		while total - nextOffset > 0:
+			recv_size = sockfd.recv_into(view[nextOffset:], total - nextOffset)
+			nextOffset += recv_size
+
+		try:
+			deserialized = json.loads(view.tobytes())
+		except (TypeError, ValueError), e:
+			raise Exception('Data received was not in JSON format')
+
+		print deserialized
+		return deserialized
 
 	BUF_MAX = 4096
 		
