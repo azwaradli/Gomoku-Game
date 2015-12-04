@@ -19,6 +19,8 @@ class Handler(object):
 						self.running = False
 
 				self.processDataRecv(self.msgRecv)
+			except Exception, e:
+				print e
 
 	def processDataRecv(self, message):
 		if standard.MESSAGE not in message:
@@ -52,4 +54,6 @@ class Handler(object):
 					print "you are connected to room", self.room_id
 				else:
 					print "login unsuccessful..."
+
+			elif message[standard.MESSAGE] == standard.MESSAGE_
 

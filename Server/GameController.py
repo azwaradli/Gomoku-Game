@@ -45,4 +45,12 @@ class GameController(object):
 		room = Room(self.CURRENT_ROOMID, name)
 		self.CURRENT_ROOMID += 1
 		return room
+
+	def findPlayer(self, id):
+		for player in self.onlinePlayers:
+			if player.getPlayerId() == id:
+				return player
+
+		return None
+
 		

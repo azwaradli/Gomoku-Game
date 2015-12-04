@@ -50,7 +50,14 @@ class Server(object):
 						elif msgType == standard.MESSAGE_REFRESH:				# get the list of the room in the server
 							roomList = []
 							for room in self.gameServer.getRoomList():
-								roomTuple = [(standard.PARAM_ROOM_ID, room.getRoomId()), (standard.PARAM_ROOM_NAME, room.getRoomName())]
+								playerList = []
+								for playerId in room.getPlayersInRoom():
+									player = self.gameServer.findPlayer(playerId)
+									if player:
+										playerTuple = [(standard.PARAM_PLAYER_ID, player.getPlayerId()), (standard.PARAM_USERNAME, player.getPlayerNickname())]
+										playerList.append(playerTuple)
+
+								roomTuple = [(standard.PARAM_ROOM_ID, room.getRoomId()), (standard.PARAM_ROOM_NAME, room.getRoomName()), (standard.PARAM_ROOM_PLAYERS, playerList)]
 								roomList.append(roomTuple)
 
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("room_list", roomList)])
