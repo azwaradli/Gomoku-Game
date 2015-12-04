@@ -1,0 +1,88 @@
+#:kivy 1.0
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManager:
+	transition: FadeTransition()
+	GomokuLogin:
+	GomokuRooms:
+
+<GomokuRooms>:
+	grid: main_canvas
+
+	name: "room"
+	GridLayout:
+		id: main_canvas
+		rows: 5
+		GridLayout:
+			id: rooms
+			cols: 2
+			Label:
+				id: helloUser
+				padding: [5,5]
+				text: 'Hi, [color=F41D4E]'+ root.username +'[/color]'
+				markup: True
+				height: 50
+				size_hint_y: None
+			GridLayout:
+				cols:2
+				padding: [5,5]
+				height: 50
+				size_hint_y: None
+				Button:
+					text: 'New Room'
+				Button:
+					text: 'Logout'
+					
+			#GridLayout:
+			#	rows: 3
+			#	Label:
+			#		text: 'Room 1'
+			#	GridLayout:
+			#	GridLayout:
+			#GridLayout:
+			#	rows: 4
+			#	Label:
+			#		text: 'Player :'
+			#	Label:
+			#		text: 'fauzan'
+			#	Label:
+			#		text: 'ahmad'
+			#	Label:
+			#		text: 'azwar'
+
+
+<GomokuLogin>:
+	name: "login"
+	canvas:
+        Rectangle:
+            pos: 0, 0
+            size: self.parent.width , self.parent.height
+    GridLayout:
+		Label:
+			id: labelsatu
+			center_x: root.center_x
+	        top: root.center_y + 100
+			padding: [5,5]
+			text: '[color=F41D4E]Nickname[/color]'
+			markup: True
+		TextInput:
+			id: nickname
+			size: 500,50
+			center_x: root.center_x
+	        top: root.center_y
+			padding: [5,5]
+			line_height: 20
+			foreground_color: (0.2,0.2,0.2,1)
+			hint_text: 'nickname'
+			hint_text_color: (0.6,0.5,0.5,0.9)
+			cursor_color: (0,0,0,1)
+			multiline: False
+		Button:
+			size: 250,50
+			center_x: root.center_x
+	        top: root.center_y - 100
+			padding: [5,5]
+			background_color: [2.8,2.8,2.8,1]
+			text: '[color=F41D4E]Enter[/color]'
+			markup: True
+			on_press: root.manager.get_screen('room').setUsername(root.ids.nickname.text); app.root.current = "room"; root.manager.get_screen('room').printRoom()
