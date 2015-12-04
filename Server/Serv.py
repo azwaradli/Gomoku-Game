@@ -44,7 +44,7 @@ class Server(object):
 							player = self.gameServer.newPlayer(playerName, sock)
 							self.gameServer.addPlayerOnline(player)
 
-							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("player_id", player.getPlayerId())])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_PLAYER_ID, player.getPlayerId())])
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_REFRESH:				# get the list of the room in the server
@@ -67,23 +67,25 @@ class Server(object):
 						elif msgType == "list_user":
 							playerList = []
 							for player in self.gameServer.getOnlinePlayers():
-								playerTuple = [("user_id", player.getPlayerId()), ("name", player.getPlayerNickname())]
+								playerTuple = [(standard.PARAM_PLAYER_ID, player.getPlayerId()), ("name", player.getPlayerNickname())]
 								playerList.append(playerTuple)
+								print playerList
 
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("player_list", playerList)])
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "join_room":			# player want to join the defined room
-							roomId = msg["params"]["room_id"]
-							roomTarget = self.gameServer.getRoomList()[roomId]
+						elif msgType == standard.MESSAGE_JOIN_ROOM:			# player want to join the defined room
+							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
+							print roomId
+							roomTarget = self.gameServer.getRoomList()[roomId-1]
 
 							# check if the room is full
 							# if not full, add the player to the room
 							if len(roomTarget.getPlayersInRoom()) < 5:
-								roomTarget.addPlayerToRoom(msg["params"]["player_id"])
-								obj = dict([("message", msgType), ("success", 1)])
+								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_ID, roomId)])
 							else:
-								obj = dict([("message", msgType), ("success", 0)])
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
 								
 							self.msServer.sendMessage(sock, obj)
 

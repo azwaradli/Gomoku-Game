@@ -36,7 +36,7 @@ class GameController(object):
 
 	def newPlayer(self, name, sockfd):
 		# creating a new player
-		player = Player(self.CURRENT_ONLINE_PLAYERS_ID, sockfd, name)
+		player = Player(self.CURRENT_ONLINE_PLAYERS_ID, name, sockfd)
 		self.CURRENT_ONLINE_PLAYERS_ID += 1
 		return player
 

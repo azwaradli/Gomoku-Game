@@ -6,6 +6,8 @@ class Client(object):
 
 	def __init__(self, conn):
 		self.conn = conn
+		self.player_id = -1
+		self.room_id = -1
 
 	def send(self, data):
 		self.conn.send(data)
@@ -41,8 +43,8 @@ class Client(object):
 
 	def joinRoom(self, roomId, playerId):
 		param = {}
-		param[standard.PARAM_ROOM_Id] = roomId
-		param[standard.PARAM_PLAYER_Id] = playerId
+		param[standard.PARAM_ROOM_ID] = roomId
+		param[standard.PARAM_PLAYER_ID] = playerId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
@@ -51,8 +53,8 @@ class Client(object):
 
 	def joinGame(self, playerId, roomId):
 		param = {}
-		param[standard.PARAM_PLAYER_Id] = playerId
-		param[standard.PARAM_ROOM_Id] = roomId
+		param[standard.PARAM_PLAYER_ID] = playerId
+		param[standard.PARAM_ROOM_ID] = roomId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
@@ -63,7 +65,7 @@ class Client(object):
 		param = {}
 		param[standard.PARAM_ROW] = row
 		param[standard.PARAM_COL] = col
-		param[standard.PARAM_PLAYER_Id] = playerId
+		param[standard.PARAM_PLAYER_ID] = playerId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_SET_PAWN
@@ -72,7 +74,7 @@ class Client(object):
 
 	def spectate(self, roomId):
 		param = {}
-		param[standard.PARAM_ROOM_Id] = roomId
+		param[standard.PARAM_ROOM_ID] = roomId
 
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
@@ -103,20 +105,32 @@ class Client(object):
 						if standard.MESSAGE in data:
 							if data[standard.MESSAGE] == standard.MESSAGE_AUTH:
 								if data[standard.MESSAGE_SUCCESS] == 1:
-									print "login successful. your login key =", data["player_id"]
+									self.player_id = data[standard.PARAM_PLAYER_ID]
+									print "login successful. your login key =", self.player_id
 								else:
 									print "login unsuccessful..."
+
 							elif data[standard.MESSAGE] == standard.MESSAGE_REFRESH:
 								for room in data["room_list"]:
 									print room
+
 							elif data[standard.MESSAGE] == standard.MESSAGE_CREATE_ROOM:
 								if data[standard.MESSAGE_SUCCESS] == 1:
 									print "create room successful."
 								else:
 									print "create room unsuccessful..."
+
 							elif data[standard.MESSAGE] == "list_user":
 								for player in data["player_list"]:
 									print player
+
+							elif data[standard.MESSAGE] == standard.MESSAGE_JOIN_ROOM:
+								if data[standard.MESSAGE_SUCCESS] == 1:
+									self.room_id = data[standard.PARAM_ROOM_ID]
+									print "you are connected to room", self.room_id
+								else:
+									print "login unsuccessful..."
+
 						else :
 							print "\nDisconnected from server!"
 							sys.exit()
@@ -134,6 +148,8 @@ class Client(object):
 							self.createRoom(command[1])
 						elif (command[0] == "online"):
 							self.onlinePlayers()
+						elif (command[0] == standard.MESSAGE_JOIN_ROOM):
+							self.joinRoom(self.player_id, int(command[1]))
 			except Exception, e:
 				print e
 
