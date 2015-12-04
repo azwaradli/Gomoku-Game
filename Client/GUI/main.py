@@ -11,6 +11,7 @@ from kivy.graphics import *
 
 #Function for changing the screen
 def game_screen(*args):
+	App.get_running_app().root.get_screen('game').init()
 	App.get_running_app().root.current = 'game'
 
 class GomokuLogin(Screen):
@@ -22,22 +23,26 @@ class GomokuRooms(Screen):
 	def setUsername(self, user):
 		self.username = user
 
+	def getUsername(self):
+		return username
+
 	def setRoomAmount(self, amount):
 		self.roomAmount = amount
 
 	def printRoom(self):
-		roomAmount = 4
+		roomAmount = 0
 		self.ids.rooms.clear_widgets()
 		if roomAmount > 0:
 			for i in range (0,roomAmount):
 				#Init
-				roomName = Label(text="[color=F41D4E]Room 1[/color]", markup= True)
-				tag1 = Label(text="Player :")
+				roomName = Label(text="[color=F41D4E]Room 1[/color]", markup= True, font_size='20sp')
+				tag1 = Label(text="[color=ffffff]Player[/color]", markup=True)
 				mainGrid = GridLayout(cols= 2)
 
 				#Setting Background - not function yet -
-				#mainGrid.canvas.add(Color(1,1,1,.5))
-				#mainGrid.canvas.add(Rectangle(pos=self.pos, size=self.size))
+				#if i == 0:
+				#	mainGrid.canvas.add(Color(0.06,0.537,0.98,1))
+				#	mainGrid.canvas.add(Rectangle(pos=self.pos, size=self.size))
 
 				#Process
 					#adding roomname
@@ -45,19 +50,25 @@ class GomokuRooms(Screen):
 				titleGrid.add_widget(roomName)
 					#adding button for room
 				buttonGrid = GridLayout(rows=2, padding=[250,0])
-				joinButton = Button(text='Join',on_press= game_screen)
+				joinButton = Button(text='[color=F41D4E]Join[/color]',on_press= game_screen, markup= True, background_color=[2.8,2.8,2.8,1])
 				#joinButton.bind(on_press=change_screen('game'))
-				watchButton = Button(text='Watch')
+				watchButton = Button(text='[color=F41D4E]Watch[/color]', markup= True, background_color=[2.8,2.8,2.8,1])
 				buttonGrid.add_widget(joinButton)
 				buttonGrid.add_widget(watchButton)
 
 				titleGrid.add_widget(buttonGrid)
 					#adding playername
-				playerGrid = GridLayout(rows=4, padding=[5,10])
+				playerGrid = GridLayout(rows=2, padding=[100,0])
 				playerGrid.add_widget(tag1)
-				playerGrid.add_widget(Label(text='fauzan'))
-				playerGrid.add_widget(Label(text='ahmad'))
-				playerGrid.add_widget(Label(text='azwar'))
+
+				playerGridInner = GridLayout(cols=2)
+				playerGridInner.add_widget(Button(text='[color=eeeeee]fauzan[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
+				playerGridInner.add_widget(Button(text='[color=eeeeee]ahmad[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
+				playerGridInner.add_widget(Button(text='[color=eeeeee]azwar[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
+				playerGridInner.add_widget(Button(text='[color=eeeeee]adli[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
+				playerGridInner.add_widget(Button(text='[color=eeeeee]naufal[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
+
+				playerGrid.add_widget(playerGridInner)
 					#including roomname and playername
 				mainGrid.add_widget(titleGrid)
 				mainGrid.add_widget(playerGrid)
@@ -71,7 +82,36 @@ class GomokuMakeRoom(Screen):
 	pass
 
 class GomokuGame(Screen):
-	pass
+	gameboard = [[Button() for j in range(20)] for i in range(20)]
+	def init(self):
+		p = 0
+		for row in self.gameboard:
+			q = 0
+			for square in row:
+				temp = str(p)
+				temp += "-"
+				temp += str(q)
+				square = Button(text=temp)
+				square.bind(on_press= self.game_button_event)
+				q += 1
+		p += 1
+		self.printBoard()
+	def printBoard(self):
+		self.ids.game_board.clear_widgets()
+		for row in self.gameboard:
+			for square in row:
+				self.ids.game_board.add_widget(square)
+	def updateBoard(self, row, col, color):
+		gameboard[row][col] = Button(text='X', background_color=color)
+
+	def game_button_event(self, *args):
+		ids = button.text.split(',')
+		id1 = int(ids[0])
+		id2 = int(ids[1])
+		user = App.get_running_app().root.get_screen('room').getUsername()
+		color = Color(rgba(0,0,0,1))
+		updateBoard(id1, id2, color)
+
 
 class ScreenManager(ScreenManager):
 	pass
