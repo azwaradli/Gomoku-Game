@@ -1,3 +1,5 @@
+from Game import *
+
 class Room(object):
 
 	def __init__(self, roomId, roomName):

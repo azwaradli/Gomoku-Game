@@ -1,3 +1,5 @@
+from Board import *
+
 class Game(object):
 	
 	def __init__(self, r_id):
@@ -43,7 +45,7 @@ class Game(object):
 			else:
 				turn = (turn + 1) % len(playerList)
 			return True
-		else
+		else:
 			return False
 
 	def getTurn(self):
