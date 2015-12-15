@@ -19,5 +19,6 @@ PARAM_PLAYER_ID		= "user_id"
 PARAM_ROOM_ID		= "room_id"
 PARAM_ROOM_NAME		= "room_name"
 PARAM_ROOM_PLAYERS	= "list_players"
+PARAM_ROOM_LIST		= "list_room"
 
 MESSAGE_SUCCESS 	= "success"

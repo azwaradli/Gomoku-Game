@@ -44,21 +44,29 @@ class Server(object):
 							player = self.gameServer.newPlayer(playerName, sock)
 							self.gameServer.addPlayerOnline(player)
 
-							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("player_id", player.getPlayerId())])
-							print obj
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_PLAYER_ID, player.getPlayerId())])
+							print "send:", obj
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_REFRESH:				# get the list of the room in the server
 							roomList = []
 							for room in self.gameServer.getRoomList():
-								roomTuple = [("id", room.getRoomId()), ("name", room.getRoomName())]
+								playerList = []
+								for playerId in room.getPlayersInRoom():
+									player = self.gameServer.findPlayer(playerId)
+									if player:
+										playerTuple = [(standard.PARAM_PLAYER_ID, player.getPlayerId()), (standard.PARAM_USERNAME, player.getPlayerNickname())]
+										playerList.append(playerTuple)
+
+								roomTuple = [(standard.PARAM_ROOM_ID, room.getRoomId()), (standard.PARAM_ROOM_NAME, room.getRoomName()), (standard.PARAM_ROOM_PLAYERS, playerList)]
 								roomList.append(roomTuple)
 
-							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("room_list", roomList)])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_LIST, roomList)])
+							print "send:", obj
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_CREATE_ROOM:			# player want to create a new room with the name
-							roomName = msg[standard.MESSAGE_PARAM]["name"]
+							roomName = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_NAME]
 							room = self.gameServer.newRoom(roomName)
 							self.gameServer.addRoom(room)
 
@@ -66,13 +74,13 @@ class Server(object):
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.JOIN_ROOM:			# player want to join the defined room
-							roomId = msg[standard.MESSAGE_PARAM]["room_id"]
+							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
 							# check if the room is full
 							# if not full, add the player to the room
 							if len(roomTarget.getPlayersInRoom()) < 5:
-								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM]["player_id"])
+								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							else:
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
@@ -80,10 +88,10 @@ class Server(object):
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_LEAVE:			# case if the player lefts the current room he was in
-							roomId = msg[standard.MESSAGE_PARAM]["room_id"]
+							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
-							roomTarget.deletePlayerFromRoom(msg[standard.MESSAGE_PARAM]["player_id"])
+							roomTarget.deletePlayerFromRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID])
 							if len(roomTarget.getPlayersInRoom()) == 0:
 								# function to delete the room
 								gameServer.deleteRoom(roomTarget)
@@ -92,9 +100,29 @@ class Server(object):
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							self.msServer.sendMessage(sock, obj)
 
+						elif msgType == standard.MESSAGE_JOIN_GAME:
+							#INCOMPLETE
+							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
+							roomTarget = self.gameServer.getRoomList()[roomId]
+
+							# check if the room is full
+							# if not full, add the player to the room
+							if len(roomTarget.getPlayersInRoom()) < 5:
+								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
+							else:
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
+								
+							self.msServer.sendMessage(sock, obj)							
+
 						elif msgType == standard.MESSAGE_START_GAME:		# start the game command
 							# check the current enlisted game if maximum
-							
+							if :
+								pass
+
+						elif msgType == standard.MESSAGE_SET_PAWN:
+
+						elif msgType == standard.MESSAGE_CHAT:
 
 						else:
 							pass
@@ -105,7 +133,7 @@ class Server(object):
 						if sock in self.CONNECTION_LIST:
 							self.CONNECTION_LIST.remove(sock)
 						print "Client (%s, %s) is offline!" % addr
-						
+						# closing the sockets
 						sock.close()
 						
 						continue

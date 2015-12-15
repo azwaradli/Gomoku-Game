@@ -5,6 +5,7 @@ class Room(object):
 		self.roomId = roomId
 		self.roomName = roomName
 		self.playerList = []
+		self.game = Game()
 
 	def getRoomId(self):
 		return self.roomId
