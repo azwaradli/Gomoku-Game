@@ -13,6 +13,8 @@ from client import Client
 from Connection import Connection
 from Handler import Handler
 import threading
+import array
+import json
 
 #Global Variable
 connected = False
@@ -23,6 +25,8 @@ try:
 	connected = True
 except:
 	connected = False
+
+playerID = -1
 
 #Function for changing the screen
 def game_screen(*args):
@@ -45,17 +49,18 @@ class GomokuLogin(Screen):
 			App.get_running_app().root.get_screen('room').setUsername(user)
 			App.get_running_app().root.get_screen('room').init()
 			client.login(user)
+			client.refresh()
+			handler.whenLoginReceived(App.get_running_app().root.get_screen('room').setUserid)
 			App.get_running_app().root.current = 'room'
 		else:
 			App.get_running_app().root.current = 'login'
 
 class GomokuRooms(Screen):
 	username = Property('')
+	userid = -1
 
 	def init(self):
 		client.refresh()
-		Rooms = handler.getRooms()
-		print Rooms
 
 	def setUsername(self, user):
 		self.username = user
@@ -63,16 +68,22 @@ class GomokuRooms(Screen):
 	def getUsername(self):
 		return username
 
+	def setUserid(self, userid):
+		self.userid = userid
+		print "set userid"
+		print self.userid
+
 	def setRoomAmount(self, amount):
 		self.roomAmount = amount
 
-	def printRoom(self):
-		roomAmount = 0
+	def printRoom(self, rooms):
+		roomAmount = len(rooms)
 		self.ids.rooms.clear_widgets()
 		if roomAmount > 0:
-			for i in range (0,roomAmount):
+			for room in rooms:
+				print room
 				#Init
-				roomName = Label(text="[color=F41D4E]Room 1[/color]", markup= True, font_size='20sp')
+				roomName = Label(text="[color=F41D4E]"+ room[1][1] +"[/color]", markup= True, font_size='20sp')
 				tag1 = Label(text="[color=ffffff]Player[/color]", markup=True)
 				mainGrid = GridLayout(cols= 2)
 
@@ -99,11 +110,8 @@ class GomokuRooms(Screen):
 				playerGrid.add_widget(tag1)
 
 				playerGridInner = GridLayout(cols=2)
-				playerGridInner.add_widget(Button(text='[color=eeeeee]fauzan[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
-				playerGridInner.add_widget(Button(text='[color=eeeeee]ahmad[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
-				playerGridInner.add_widget(Button(text='[color=eeeeee]azwar[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
-				playerGridInner.add_widget(Button(text='[color=eeeeee]adli[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
-				playerGridInner.add_widget(Button(text='[color=eeeeee]naufal[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))
+				for player in room[2][1]:
+					playerGridInner.add_widget(Button(text='[color=eeeeee]'+ player[0][1] +'[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))  # PLAYER_NAME
 
 				playerGrid.add_widget(playerGridInner)
 					#including roomname and playername
@@ -118,7 +126,9 @@ class GomokuRooms(Screen):
 class GomokuMakeRoom(Screen):
 	def newRoom(self, name):
 		client.createRoom(name)
-		App.get_running_app().root.get_screen('room').init()
+		client.refresh()
+		handler.whenRoomReceived(App.get_running_app().root.get_screen('room').printRoom)
+		
 
 class GomokuGame(Screen):
 	gameboard = [[Button() for j in range(20)] for i in range(20)]

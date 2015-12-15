@@ -1,4 +1,4 @@
-from Serv import *
+from Server import *
 
 if __name__ == '__main__':
 	try:

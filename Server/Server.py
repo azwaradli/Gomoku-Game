@@ -117,12 +117,15 @@ class Server(object):
 
 						elif msgType == standard.MESSAGE_START_GAME:		# start the game command
 							# check the current enlisted game if maximum
-							if :
-								pass
+							#if :
+							#	pass
+							pass
 
 						elif msgType == standard.MESSAGE_SET_PAWN:
+							pass
 
 						elif msgType == standard.MESSAGE_CHAT:
+							pass
 
 						else:
 							pass

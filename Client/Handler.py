@@ -2,7 +2,7 @@ import json
 import standard
 
 class Handler(object):
-	listRooms = ["" for j in range(5)]
+	listRooms = []
 	def __init__(self, conn):
 		self.conn = conn
 		self.running = True
@@ -10,6 +10,8 @@ class Handler(object):
 		self.playerId = -1
 		self.roomId = -1
 		self.message = ""
+		self.receiveRoomEvent = []
+		self.receiveLoginEvent = []
 
 	def getRooms(self):
 		return self.listRooms
@@ -36,15 +38,21 @@ class Handler(object):
 				if message[standard.MESSAGE_SUCCESS] == 1:
 					self.player_id = message[standard.PARAM_PLAYER_ID]
 					print "login successful. your login key =", self.player_id
+					for callback in self.receiveLoginEvent:
+						print "announcing login callback"
+						callback(self.player_id)
 				else:
 					print "login unsuccessful..."
 
 			elif message[standard.MESSAGE] == standard.MESSAGE_REFRESH:
 				i = 0
+				del self.listRooms [:]
 				for room in message["room_list"]:
-					self.listRooms[i] = room
+					self.listRooms.append(room)
 					i += 1
-					print room
+					for callback in self.receiveRoomEvent:
+						print "announcing rooms callback"
+						callback(self.listRooms)
 
 			elif message[standard.MESSAGE] == standard.MESSAGE_CREATE_ROOM:
 				if message[standard.MESSAGE_SUCCESS] == 1:
@@ -64,4 +72,22 @@ class Handler(object):
 					print "login unsuccessful..."
 
 			self.message = message
+
+	def whenRoomReceived(self, callback):
+		print 'room'
+		self.receiveRoomEvent.append(callback)
+
+	def whenLoginReceived(self,callback):
+		print 'login'
+		self.receiveLoginEvent.append(callback)
+
+
+
+
+
+
+
+
+
+
 
