@@ -37,62 +37,64 @@ class Server(object):
 				else:
 					try:
 						msg = self.msServer.receiveMessage(sock)	# receive the message sent from sock
-						print msg
 						msgType = msg[standard.MESSAGE]
 
-						if msgType == "auth":						# user first-time log into the server
+						if msgType == standard.MESSAGE_AUTH:						# user first-time log into the server
 							playerName = msg[standard.MESSAGE_PARAM][standard.PARAM_USERNAME]
 							player = self.gameServer.newPlayer(playerName, sock)
 							self.gameServer.addPlayerOnline(player)
-							print "auth"
 
-							obj = dict([("message", msgType), ("success", 1), ("player_id", player.getPlayerId())])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("player_id", player.getPlayerId())])
 							print obj
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "refresh":				# get the list of the room in the server
+						elif msgType == standard.MESSAGE_REFRESH:				# get the list of the room in the server
 							roomList = []
 							for room in self.gameServer.getRoomList():
 								roomTuple = [("id", room.getRoomId()), ("name", room.getRoomName())]
 								roomList.append(roomTuple)
 
-							obj = dict([("message", msgType), ("success", 1), ("room_list", roomList)])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), ("room_list", roomList)])
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "create_room":			# player want to create a new room with the name
-							roomName = msg["params"]["name"]
+						elif msgType == standard.MESSAGE_CREATE_ROOM:			# player want to create a new room with the name
+							roomName = msg[standard.MESSAGE_PARAM]["name"]
 							room = self.gameServer.newRoom(roomName)
 							self.gameServer.addRoom(room)
 
-							obj = dict([("message", msgType), ("success", 1)])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "join_room":			# player want to join the defined room
-							roomId = msg["params"]["room_id"]
+						elif msgType == standard.JOIN_ROOM:			# player want to join the defined room
+							roomId = msg[standard.MESSAGE_PARAM]["room_id"]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
 							# check if the room is full
 							# if not full, add the player to the room
 							if len(roomTarget.getPlayersInRoom()) < 5:
-								roomTarget.addPlayerToRoom(msg["params"]["player_id"])
-								obj = dict([("message", msgType), ("success", 1)])
+								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM]["player_id"])
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							else:
-								obj = dict([("message", msgType), ("success", 0)])
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
 								
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == "left_room":			# case if the player lefts the current room he was in
-							roomId = msg["params"]["room_id"]
+						elif msgType == standard.MESSAGE_LEAVE:			# case if the player lefts the current room he was in
+							roomId = msg[standard.MESSAGE_PARAM]["room_id"]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
-							roomTarget.deletePlayerFromRoom(msg["params"]["player_id"])
+							roomTarget.deletePlayerFromRoom(msg[standard.MESSAGE_PARAM]["player_id"])
 							if len(roomTarget.getPlayersInRoom()) == 0:
 								# function to delete the room
 								gameServer.deleteRoom(roomTarget)
 								print "Room %d deleted! Room is empty" % (roomId)
 
-							obj = dict([("message", msgType), ("success", 1)])
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							self.msServer.sendMessage(sock, obj)
+
+						elif msgType == standard.MESSAGE_START_GAME:		# start the game command
+							# check the current enlisted game if maximum
+							
 
 						else:
 							pass
