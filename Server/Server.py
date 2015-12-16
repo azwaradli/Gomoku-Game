@@ -113,6 +113,16 @@ class Server(object):
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							print "send", obj
 							self.msServer.sendMessage(sock, obj)
+
+							# broadcast the current user
+							playerList = []
+							for playerId in roomTarget.getPlayersInRoom():
+								player = self.gameServer.findPlayer(playerId)
+								if player:
+									playerTuple = [(standard.PARAM_PLAYER_ID, player.getPlayerId()), (standard.PARAM_USERNAME, player.getPlayerNickname())]
+									playerList.append(playerTuple)
+
+							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_ID, roomTarget.getRoomId()), (standard.PARAM_ROOM_NAME, roomTarget.getRoomName()), (standard.PARAM_ROOM_PLAYERS, playerList)])
 							self.broadcastToRoom(roomId, obj)
 
 						elif msgType == standard.MESSAGE_JOIN_GAME:
