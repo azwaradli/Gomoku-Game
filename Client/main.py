@@ -29,7 +29,11 @@ except:
 playerID = -1
 
 #Function for changing the screen
-def game_screen(*args):
+def game_screen(instance, room_numbers, userid):
+	print "##########Game room : "
+	print room_numbers
+	print "User id :"
+	print userid
 	App.get_running_app().root.get_screen('game').init()
 	App.get_running_app().root.current = 'game'
 
@@ -70,8 +74,6 @@ class GomokuRooms(Screen):
 
 	def setUserid(self, userid):
 		self.userid = userid
-		print "set userid"
-		print self.userid
 
 	def setRoomAmount(self, amount):
 		self.roomAmount = amount
@@ -98,7 +100,7 @@ class GomokuRooms(Screen):
 				titleGrid.add_widget(roomName)
 					#adding button for room
 				buttonGrid = GridLayout(rows=2, padding=[250,0])
-				joinButton = Button(text='[color=F41D4E]Join[/color]',on_press= game_screen, markup= True, background_color=[2.8,2.8,2.8,1])
+				joinButton = Button(text='[color=F41D4E]Join[/color]',on_press= lambda instance: game_screen(instance, room[0][1], self.userid), markup= True, background_color=[2.8,2.8,2.8,1])
 				#joinButton.bind(on_press=change_screen('game'))
 				watchButton = Button(text='[color=F41D4E]Watch[/color]', markup= True, background_color=[2.8,2.8,2.8,1])
 				buttonGrid.add_widget(joinButton)
