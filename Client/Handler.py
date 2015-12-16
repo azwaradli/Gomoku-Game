@@ -47,7 +47,7 @@ class Handler(object):
 			elif message[standard.MESSAGE] == standard.MESSAGE_REFRESH:
 				i = 0
 				del self.listRooms [:]
-				for room in message["room_list"]:
+				for room in message[standard.PARAM_ROOM_LIST]:
 					self.listRooms.append(room)
 					i += 1
 					for callback in self.receiveRoomEvent:

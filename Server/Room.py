@@ -7,7 +7,7 @@ class Room(object):
 		self.roomId = roomId
 		self.roomName = roomName
 		self.playerList = []
-		self.game = Game()
+		self.game = Game(roomId)
 
 	def getRoomId(self):
 		return self.roomId
