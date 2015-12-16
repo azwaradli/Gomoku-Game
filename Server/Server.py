@@ -96,7 +96,7 @@ class Server(object):
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
 							
 							print "send", obj
-							self.broadcastToRoom(obj, roomId)
+							self.broadcastToRoom(roomId, obj)
 
 						elif msgType == standard.MESSAGE_LEAVE:			# case if the player lefts the current room he was in
 							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
@@ -156,10 +156,12 @@ class Server(object):
 						exit()
 
 	def broadcastToAll(self, message):
+		print message
 		for player in self.gameServer.getOnlinePlayers():
 			self.msServer.sendMessage(player.getPlayerSocket(), message)
 
 	def broadcastToRoom(self, roomid, message):
+		print message
 		roomTarget = self.gameServer.findRoom(roomid)
 		if roomTarget:
 			for playerId in roomTarget.getPlayersInRoom():
