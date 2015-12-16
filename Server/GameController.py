@@ -53,4 +53,10 @@ class GameController(object):
 
 		return None
 
+	def findRoom(self, id):
+		for room in self.roomList:
+			if room.getRoomId() == id:
+				return room
+
+		return None
 		

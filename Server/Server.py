@@ -73,7 +73,7 @@ class Server(object):
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							self.msServer.sendMessage(sock, obj)
 
-						elif msgType == standard.JOIN_ROOM:			# player want to join the defined room
+						elif msgType == standard.MESSAGE_JOIN_ROOM:			# player want to join the defined room
 							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
@@ -149,6 +149,17 @@ class Server(object):
 
 					except KeyboardInterrupt:
 						exit()
+
+	def broadcastToAll(self, message):
+		for player in self.gameServer.getOnlinePlayers():
+			self.msServer.sendMessage(player.getPlayerSocket(), message)
+
+	def broadcastToRoom(self, roomid, message):
+		roomTarget = self.gameServer.findRoom(roomid)
+		if roomTarget:
+			for playerId in roomTarget.getPlayersInRoom():
+				sock = self.gameServer.findPlayer(playerId).getPlayerSocket()
+				self.msServer.sendMessage(sock, message)
 
 	def close(self):
 		self.sockfd.close()
