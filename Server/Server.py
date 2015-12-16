@@ -113,6 +113,7 @@ class Server(object):
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
 							print "send", obj
 							self.msServer.sendMessage(sock, obj)
+							self.broadcastToRoom(roomId, obj)
 
 						elif msgType == standard.MESSAGE_JOIN_GAME:
 							#INCOMPLETE

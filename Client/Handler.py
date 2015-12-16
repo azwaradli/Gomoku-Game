@@ -67,7 +67,7 @@ class Handler(object):
 
 					roomName = message[standard.PARAM_ROOM_NAME]
 					playerList = message[standard.PARAM_ROOM_PLAYERS]
-					
+
 					print "you are connected to room", self.room_id
 					for callback in self.receiveJoinEvent:
 						print "announcing join callback"
@@ -77,9 +77,15 @@ class Handler(object):
 
 			elif message[standard.MESSAGE] == standard.MESSAGE_JOIN_GAME:
 				if message[standard.MESSAGE_SUCCESS] == 1:
-					print "you are connected to the game"
+					print "you are connected to the game!"
 				else:
 					print "join game unsuccessful..."
+
+			elif message[standard.MESSAGE] == standard.MESSAGE_LEAVE:
+				if message[standard.MESSAGE_SUCCESS] == 1:
+					print "You are leaving the room!"
+				else:
+					print "Leaving room unsuccessful..."
 
 			self.message = message
 
