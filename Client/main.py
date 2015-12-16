@@ -29,12 +29,13 @@ except:
 playerID = -1
 
 #Function for changing the screen
-def game_screen(instance, room_numbers, userid):
+def game_screen(instance, room_id, userid):
 	print "##########Game room : "
-	print room_numbers
+	print room_id
 	print "User id :"
 	print userid
-	App.get_running_app().root.get_screen('game').init()
+	client.joinRoom(room_id, userid)
+	handler.whenJoinReceived(App.get_running_app().root.get_screen('game').init)
 	App.get_running_app().root.current = 'game'
 
 class myThread (threading.Thread):
@@ -53,8 +54,9 @@ class GomokuLogin(Screen):
 			App.get_running_app().root.get_screen('room').setUsername(user)
 			App.get_running_app().root.get_screen('room').init()
 			client.login(user)
-			client.refresh()
 			handler.whenLoginReceived(App.get_running_app().root.get_screen('room').setUserid)
+			handler.whenRoomReceived(App.get_running_app().root.get_screen('room').printRoom)
+			client.refresh()
 			App.get_running_app().root.current = 'room'
 		else:
 			App.get_running_app().root.current = 'login'
@@ -83,7 +85,7 @@ class GomokuRooms(Screen):
 		self.ids.rooms.clear_widgets()
 		if roomAmount > 0:
 			for room in rooms:
-				print room
+				print room[1][1]
 				#Init
 				roomName = Label(text="[color=F41D4E]"+ room[1][1] +"[/color]", markup= True, font_size='20sp')
 				tag1 = Label(text="[color=ffffff]Player[/color]", markup=True)
@@ -113,7 +115,7 @@ class GomokuRooms(Screen):
 
 				playerGridInner = GridLayout(cols=2)
 				for player in room[2][1]:
-					playerGridInner.add_widget(Button(text='[color=eeeeee]'+ player[0][1] +'[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))  # PLAYER_NAME
+					playerGridInner.add_widget(Button(text='[color=eeeeee]'+ player[1][1] +'[/color]', markup=True, background_color=[2.953,1.67,0.471,1]))  # PLAYER_NAME
 
 				playerGrid.add_widget(playerGridInner)
 					#including roomname and playername
@@ -131,10 +133,11 @@ class GomokuMakeRoom(Screen):
 		client.refresh()
 		handler.whenRoomReceived(App.get_running_app().root.get_screen('room').printRoom)
 		
+		
 
 class GomokuGame(Screen):
 	gameboard = [[Button() for j in range(20)] for i in range(20)]
-	def init(self):
+	def init(self, roomname, userlist):
 		p = 0
 		for row in self.gameboard:
 			q = 0
@@ -147,11 +150,29 @@ class GomokuGame(Screen):
 				q += 1
 		p += 1
 		self.printBoard()
+		self.printPlayer(userlist)
 	def printBoard(self):
 		self.ids.game_board.clear_widgets()
 		for row in self.gameboard:
 			for square in row:
 				self.ids.game_board.add_widget(square)
+
+	def printPlayer(self, userlist):
+
+		listColor = [[0.188,1.612,2.941,1],[2.953,1.67,0.471,1],[0.294,1.753,0.07,1]]
+		self.ids.player_board.clear_widgets()
+
+		playerLabel = Label(text= "[color=F41D4E]Player[/color]", markup= True)
+		self.ids.player_board.add_widget(playerLabel)
+
+		print "userlist in print player"
+		print userlist
+		i = 0;
+		for user in userlist:
+			playerTemp = Button(text= "[color=ffffff]"+user[1][1]+"[/color]", markup= True, background_color= listColor[i])
+			self.ids.player_board.add_widget(playerTemp)
+			i += 1
+
 	def updateBoard(self, row, col, color):
 		gameboard[row][col] = Button(text='X', background_color=color)
 		printBoard()

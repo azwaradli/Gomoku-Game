@@ -12,6 +12,7 @@ class Handler(object):
 		self.message = ""
 		self.receiveRoomEvent = []
 		self.receiveLoginEvent = []
+		self.receiveJoinEvent = []
 
 	def getRooms(self):
 		return self.listRooms
@@ -68,6 +69,9 @@ class Handler(object):
 					playerList = message[standard.PARAM_ROOM_PLAYERS]
 					
 					print "you are connected to room", self.room_id
+					for callback in self.receiveJoinEvent:
+						print "announcing join callback"
+						callback(roomName, playerList)
 				else:
 					print "room join unsuccessful..."
 
@@ -86,6 +90,10 @@ class Handler(object):
 	def whenLoginReceived(self,callback):
 		print 'login'
 		self.receiveLoginEvent.append(callback)
+
+	def whenJoinReceived(self, callback):
+		print 'join'
+		self.receiveJoinEvent.append(callback)
 
 
 

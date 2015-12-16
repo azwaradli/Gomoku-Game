@@ -78,7 +78,7 @@ class Server(object):
 
 						elif msgType == standard.MESSAGE_JOIN_ROOM:			# player want to join the defined room
 							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
-							roomTarget = self.gameServer.getRoomList()[roomId]
+							roomTarget = self.gameServer.findRoom(roomId)
 
 							# check if the room is full
 							# if not full, add the player to the room
