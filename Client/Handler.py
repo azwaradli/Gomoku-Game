@@ -60,16 +60,22 @@ class Handler(object):
 				else:
 					print "create room unsuccessful..."
 
-			elif message[standard.MESSAGE] == "list_user":
-				for player in message["player_list"]:
-					print player
-
 			elif message[standard.MESSAGE] == standard.MESSAGE_JOIN_ROOM:
 				if message[standard.MESSAGE_SUCCESS] == 1:
 					self.room_id = message[standard.PARAM_ROOM_ID]
+
+					roomName = message[standard.PARAM_ROOM_NAME]
+					playerList = message[standard.PARAM_ROOM_PLAYERS]
+					
 					print "you are connected to room", self.room_id
 				else:
-					print "login unsuccessful..."
+					print "room join unsuccessful..."
+
+			elif message[standard.MESSAGE] == standard.MESSAGE_JOIN_GAME:
+				if message[standard.MESSAGE_SUCCESS] == 1:
+					print "you are connected to the game"
+				else:
+					print "join game unsuccessful..."
 
 			self.message = message
 

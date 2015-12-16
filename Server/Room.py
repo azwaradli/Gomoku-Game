@@ -27,6 +27,9 @@ class Room(object):
 	def deletePlayerFromRoom(self, _player):
 		self.playerList.remove(_player)
 
+	def getGame(self):
+		return self.game
+
 
 
 # ROOM TESTING ONLY

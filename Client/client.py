@@ -55,7 +55,7 @@ class Client(object):
 		param[standard.PARAM_ROOM_ID] = roomId
 
 		data = {}
-		data[standard.MESSAGE] = standard.MESSAGE_JOIN_ROOM
+		data[standard.MESSAGE] = standard.MESSAGE_JOIN_GAME
 		data[standard.MESSAGE_PARAM] = param
 		self.send(data)
 
@@ -89,6 +89,11 @@ class Client(object):
 		data[standard.MESSAGE] = standard.MESSAGE_EXIT
 		self.send(data)
 		self.conn.close()
+
+	def startgame(self):
+		data = {}
+		data[standard.MESSAGE] = standard.MESSAGE_START_GAME
+		self.send(data)
 
 	"""
 	def handler(self):

@@ -81,7 +81,15 @@ class Server(object):
 							# if not full, add the player to the room
 							if len(roomTarget.getPlayersInRoom()) < 5:
 								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
-								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
+
+								playerList = []
+								for playerId in roomTarget.getPlayersInRoom():
+									player = self.gameServer.findPlayer(playerId)
+									if player:
+										playerTuple = [(standard.PARAM_PLAYER_ID, player.getPlayerId()), (standard.PARAM_USERNAME, player.getPlayerNickname())]
+										playerList.append(playerTuple)
+
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_ID, roomTarget.getRoomId()), (standard.PARAM_ROOM_NAME, roomTarget.getRoomName()), (standard.PARAM_ROOM_PLAYERS, playerList)])
 							else:
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
 								
@@ -104,15 +112,15 @@ class Server(object):
 							#INCOMPLETE
 							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
 							roomTarget = self.gameServer.getRoomList()[roomId]
+							playerId = msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID]
 
-							# check if the room is full
-							# if not full, add the player to the room
-							if len(roomTarget.getPlayersInRoom()) < 5:
-								roomTarget.addPlayerToRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
-								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
+							# if not full, add the player to the game on the room
+							if playerId in roomTarget.getPlayersInRoom():
+								roomTarget.getGame().addPlayerToGame(playerId)
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])	
 							else:
-								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
-								
+								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])	
+							
 							self.msServer.sendMessage(sock, obj)							
 
 						elif msgType == standard.MESSAGE_START_GAME:		# start the game command
