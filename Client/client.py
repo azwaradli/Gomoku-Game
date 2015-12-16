@@ -79,9 +79,14 @@ class Client(object):
 		data[standard.MESSAGE_PARAM] = param
 		self.send(data)
 
-	def leave(self):
+	def leave(self, roomId, playerId):
+		param = {}
+		param[standard.PARAM_ROOM_ID] = roomId
+		param[standard.PARAM_PLAYER_ID] = playerId
+
 		data = {}
 		data[standard.MESSAGE] = standard.MESSAGE_LEAVE
+		data[standard.MESSAGE_PARAM] = param
 		self.send(data)
 
 	def exit(self):

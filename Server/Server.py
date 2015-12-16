@@ -104,7 +104,7 @@ class Server(object):
 							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
 							roomTarget = self.gameServer.getRoomList()[roomId]
 
-							roomTarget.deletePlayerFromRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID])
+							roomTarget.deletePlayerFromRoom(msg[standard.MESSAGE_PARAM][standard.PARAM_PLAYER_ID])
 							if len(roomTarget.getPlayersInRoom()) == 0:
 								# function to delete the room
 								gameServer.deleteRoom(roomTarget)
