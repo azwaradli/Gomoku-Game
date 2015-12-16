@@ -35,8 +35,16 @@ def game_screen(instance, room_id, userid):
 	print "User id :"
 	print userid
 	client.joinRoom(room_id, userid)
+	App.get_running_app().root.get_screen('game').roomid = room_id
 	handler.whenJoinReceived(App.get_running_app().root.get_screen('game').init)
 	App.get_running_app().root.current = 'game'
+
+def leave_game(instance, room_id, userid):
+	print "Leave room ", room_id
+	client.leave(room_id, userid)
+	handler.whenLeaveReceived(App.get_running_app().root.get_screen('room').printRoom)
+	client.refresh()
+	App.get_running_app().root.current = 'room'
 
 class myThread (threading.Thread):
     def __init__(self, threadID, name):
@@ -136,6 +144,7 @@ class GomokuMakeRoom(Screen):
 		
 
 class GomokuGame(Screen):
+	roomid = -1
 	gameboard = [[Button() for j in range(20)] for i in range(20)]
 	def init(self, roomname, userlist):
 		p = 0
@@ -172,6 +181,11 @@ class GomokuGame(Screen):
 			playerTemp = Button(text= "[color=ffffff]"+user[1][1]+"[/color]", markup= True, background_color= listColor[i])
 			self.ids.player_board.add_widget(playerTemp)
 			i += 1
+		self.ids.quit_button.clear_widgets()
+		self.ids.quit_button.add_widget(GridLayout())
+		self.ids.quit_button.add_widget(GridLayout())
+		quitButton = Button(text="Quit", on_press= lambda instance: leave_game(instance, self.roomid, GomokuRooms.userid))
+		self.ids.quit_button.add_widget(quitButton)
 
 	def updateBoard(self, row, col, color):
 		gameboard[row][col] = Button(text='X', background_color=color)

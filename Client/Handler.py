@@ -13,6 +13,7 @@ class Handler(object):
 		self.receiveRoomEvent = []
 		self.receiveLoginEvent = []
 		self.receiveJoinEvent = []
+		self.receiveLeaveEvent = []
 
 	def getRooms(self):
 		return self.listRooms
@@ -84,6 +85,9 @@ class Handler(object):
 			elif message[standard.MESSAGE] == standard.MESSAGE_LEAVE:
 				if message[standard.MESSAGE_SUCCESS] == 1:
 					print "You are leaving the room!"
+					for callback in self.receiveLeaveEvent:
+						print "announcing leave callback"
+						callback(room_id, userid)
 				else:
 					print "Leaving room unsuccessful..."
 
@@ -101,6 +105,9 @@ class Handler(object):
 		print 'join'
 		self.receiveJoinEvent.append(callback)
 
+	def whenLeaveReceived(self, callback):
+		print 'leave'
+		self.receiveLeaveEvent.append(callback)
 
 
 
