@@ -64,7 +64,7 @@ class Server(object):
 
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_LIST, roomList)])
 							print "send:", obj
-							self.msServer.sendMessage(sock, obj)
+							self.broadcastToAll(obj)
 
 						elif msgType == standard.MESSAGE_CREATE_ROOM:			# player want to create a new room with the name
 							roomName = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_NAME]
@@ -96,7 +96,7 @@ class Server(object):
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
 							
 							print "send", obj
-							self.msServer.sendMessage(sock, obj)
+							self.broadcastToRoom(obj, roomId)
 
 						elif msgType == standard.MESSAGE_LEAVE:			# case if the player lefts the current room he was in
 							roomId = msg[standard.MESSAGE_PARAM][standard.PARAM_ROOM_ID]
