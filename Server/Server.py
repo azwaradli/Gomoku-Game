@@ -37,6 +37,7 @@ class Server(object):
 				else:
 					try:
 						msg = self.msServer.receiveMessage(sock)	# receive the message sent from sock
+						print "receiving", msg
 						msgType = msg[standard.MESSAGE]
 
 						if msgType == standard.MESSAGE_AUTH:						# user first-time log into the server
@@ -71,6 +72,7 @@ class Server(object):
 							self.gameServer.addRoom(room)
 
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
+							print "send", obj
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_JOIN_ROOM:			# player want to join the defined room
@@ -92,7 +94,8 @@ class Server(object):
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1), (standard.PARAM_ROOM_ID, roomTarget.getRoomId()), (standard.PARAM_ROOM_NAME, roomTarget.getRoomName()), (standard.PARAM_ROOM_PLAYERS, playerList)])
 							else:
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])
-								
+							
+							print "send", obj
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_LEAVE:			# case if the player lefts the current room he was in
@@ -106,6 +109,7 @@ class Server(object):
 								print "Room %d deleted! Room is empty" % (roomId)
 
 							obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 1)])
+							print "send", obj
 							self.msServer.sendMessage(sock, obj)
 
 						elif msgType == standard.MESSAGE_JOIN_GAME:
@@ -121,6 +125,7 @@ class Server(object):
 							else:
 								obj = dict([(standard.MESSAGE, msgType), (standard.MESSAGE_SUCCESS, 0)])	
 							
+							print "send", obj
 							self.msServer.sendMessage(sock, obj)							
 
 						elif msgType == standard.MESSAGE_START_GAME:		# start the game command
